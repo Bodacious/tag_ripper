@@ -168,7 +168,13 @@ class TagRipper
     @stored_taggables = []
   end
 
-  def taggables # rubocop:disable Metrics
+  def taggables
+    @taggables ||= process_taggables
+  end
+
+  protected
+
+  def process_taggables # rubocop:disable Metrics
     @tokens.each do |(col, line), type, token, _|
       lex = Lex.new([col, line], type, token)
       next if lex.ignored?
