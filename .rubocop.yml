@@ -1,0 +1,16 @@
+inherit_from: https://raw.githubusercontent.com/Bodacious/style-guides/refs/heads/main/.rubocop.yml
+
+plugins:
+  - rubocop-minitest
+  - rubocop-rake
+
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: enable
+  SuggestExtensions: true
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
