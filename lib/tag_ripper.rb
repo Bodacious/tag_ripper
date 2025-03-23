@@ -28,6 +28,11 @@ class Taggable
     @tags[name] = value
   end
 
+  def name_from_lex(lex)
+    @name = lex.token
+    @type = lex.type
+  end
+
   attr_reader :tags
   attr_reader :parent
 
@@ -105,7 +110,7 @@ class Lex
 
   attr_reader :state
 
-  def initialize((col, line), type, token, state)
+  def initialize((col, line), type, token, state = nil)
     @location = Location.new(col, line)
     @type = type.to_sym
     @token = token.to_s
@@ -135,6 +140,7 @@ class Lex
   def tag_values
     token.scan(/# @domain: (.+)/)[0]
   end
+
   alias tag_value tag_values
 
   def ignored?
@@ -163,23 +169,19 @@ class TagRipper
   end
 
   def taggables # rubocop:disable Metrics
-    @tokens.each do |args|
-      lex = Lex.new(*args)
+    @tokens.each do |(col, line), type, token, _|
+      lex = Lex.new([col, line], type, token)
       next if lex.ignored?
 
       @current_taggable ||= Taggable.new
       @current_taggable.add_tag(lex.tag_name, lex.tag_value) if lex.tag_comment?
-      if lex.taggable_definition?
-        if @current_taggable.named?
-          @current_taggable = Taggable.new(parent: @current_taggable)
-        else
-          @current_taggable.open
-        end
+      if lex.taggable_definition? && @current_taggable.named?
+        @current_taggable = Taggable.new(parent: @current_taggable)
+      elsif lex.taggable_definition?
+        @current_taggable.open
       end
-      if lex.taggable_name?
-        @current_taggable.name = lex.token
-        @current_taggable.type = lex.type
-      end
+
+      @current_taggable.name_from_lex(lex) if lex.taggable_name?
 
       next unless lex.end?
       raise "Can't close nil scope" unless @current_taggable
