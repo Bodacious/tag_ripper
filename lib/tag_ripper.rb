@@ -192,12 +192,6 @@ class TagRipper
       @stored_taggables << @current_taggable
       @current_taggable = @current_taggable.parent
     end
-    stored_taggables
-  end
-
-  private
-
-  def stored_taggables
-    @stored_taggables ||= []
+    @stored_taggables
   end
 end
