@@ -159,11 +159,7 @@ end
 class TagRipper
   def initialize(file_path)
     @tokens = Ripper.lex(File.read(file_path))
-    @namespace_stack = []
-    @open_scope = false
-    @discardable_nesting = 0
     @stored_taggables = []
-    @current_taggable = Taggable.new
   end
 
   def taggables # rubocop:disable Metrics
