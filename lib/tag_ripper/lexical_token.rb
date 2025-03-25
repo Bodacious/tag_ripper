@@ -1,12 +1,12 @@
 module TagRipper
   class LexicalToken
     IGNORED_TYPES = %i[on_sp
-                     on_tstring_beg
-                     on_tstring_content
-                     on_tstring_end
-                     on_nl
-                     on_ignored_nl
-                     on_period].freeze
+                       on_tstring_beg
+                       on_tstring_content
+                       on_tstring_end
+                       on_nl
+                       on_ignored_nl
+                       on_period].freeze
 
     IGNORED_TYPES_AND_TOKENS = Hash.new do |hash, key|
       hash[key] = []
