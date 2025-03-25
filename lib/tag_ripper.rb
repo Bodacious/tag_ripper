@@ -30,8 +30,7 @@ module TagRipper
         @current_taggable ||= Taggable.new
 
         if lex.tag_comment?
-          @current_taggable.add_tag(lex.tag_name,
-                                    lex.tag_value)
+          @current_taggable.add_tag(lex.tag_name, lex.tag_value)
           next
         end
 
@@ -48,17 +47,21 @@ module TagRipper
           next
         end
 
-        unless lex.end?
-          next
+        if lex.end?
+          close_current_taggable!
         end
-
-        raise "Can't close nil scope" unless @current_taggable
-
-        @current_taggable.end!
-        @stored_taggables << @current_taggable
-        @current_taggable = @current_taggable.parent
       end
       @stored_taggables
+    end
+
+    private
+
+    def close_current_taggable!
+      raise "Can't close nil scope" unless @current_taggable
+
+      @current_taggable.end!
+      @stored_taggables << @current_taggable
+      @current_taggable = @current_taggable.parent
     end
   end
 end
