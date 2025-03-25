@@ -70,5 +70,9 @@ module TagRipper
 
       "open"
     end
+
+    def build_child
+      self.class.new(parent: self)
+    end
   end
 end
