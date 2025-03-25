@@ -12,5 +12,8 @@ AllCops:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes

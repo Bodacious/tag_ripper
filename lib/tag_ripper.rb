@@ -32,17 +32,26 @@ module TagRipper
         if lex.tag_comment?
           @current_taggable.add_tag(lex.tag_name,
                                     lex.tag_value)
+          next
         end
 
         if lex.taggable_definition? && @current_taggable.named?
           @current_taggable = @current_taggable.build_child
+          next
         elsif lex.taggable_definition?
           @current_taggable.open
+          next
         end
 
-        @current_taggable.name_from_lex(lex) if lex.taggable_name?
+        if lex.taggable_name?
+          @current_taggable.name_from_lex(lex)
+          next
+        end
 
-        next unless lex.end?
+        unless lex.end?
+          next
+        end
+
         raise "Can't close nil scope" unless @current_taggable
 
         @current_taggable.end!
