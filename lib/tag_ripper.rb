@@ -1,18 +1,25 @@
 # frozen_string_literal: true
 
 require "ripper"
-
+require "yaml" if ENV["DEBUG"]
 require_relative "tag_ripper/lexical_token"
 require_relative "tag_ripper/taggable"
 
 module TagRipper
   class Ripper
+    class TaggableStack < DelegateClass(Array)
+      def initialize(*args)
+        super(args)
+      end
+    end
+
     def initialize(file_path)
       tokens = ::Ripper.lex(File.read(file_path))
       @lexical_tokens = tokens.map do |(col, line), type, token, _|
         LexicalToken.new([col, line], type, token)
       end
-      @stored_taggables = []
+      @taggable_stack = TaggableStack.new(Taggable.new)
+      @return_taggables = []
     end
 
     def taggables
@@ -21,47 +28,39 @@ module TagRipper
 
     protected
 
-    def relevant_lexical_tokens
-      @lexical_tokens.reject(&:ignored?)
-    end
-
     def process_taggables # rubocop:disable Metrics
-      relevant_lexical_tokens.each do |lex|
+      @lexical_tokens.reject(&:ignored?).each do |lex|
         @current_taggable ||= Taggable.new
+        next unless @current_taggable.respond_to?(lex.event)
 
-        if lex.tag_comment?
-          @current_taggable.add_tag(lex.tag_name, lex.tag_value)
+        # send the message to the current taggable
+        next_taggable = @current_taggable.public_send(lex.event, lex)
+
+        # if return value same as current taggable, then next step
+        next if next_taggable == @current_taggable
+
+        # if return value is parent the current has ended
+        if next_taggable == @current_taggable.parent
+          @return_taggables << next_taggable
+          @current_taggable = next_taggable
           next
         end
-
-        if lex.taggable_definition? && @current_taggable.named?
-          @current_taggable = @current_taggable.build_child
-          next
-        elsif lex.taggable_definition?
-          @current_taggable.open
-          next
-        end
-
-        if lex.taggable_name?
-          @current_taggable.name_from_lex(lex)
-          next
-        end
-
-        if lex.end?
-          close_current_taggable!
-        end
+        @current_taggable = next_taggable
+        next
       end
-      @stored_taggables
+      @return_taggables
     end
 
     private
 
-    def close_current_taggable!
-      raise "Can't close nil scope" unless @current_taggable
+    # def current_taggable
+    #   @taggable_stack.last
+    # end
 
-      @current_taggable.end!
-      @stored_taggables << @current_taggable
-      @current_taggable = @current_taggable.parent
+    def debug(message)
+      return unless ENV["DEBUG"]
+
+      puts message
     end
   end
 end

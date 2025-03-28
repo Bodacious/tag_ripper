@@ -41,6 +41,12 @@ module TagRipper
       @state = state.to_s
     end
 
+    def to_s
+      token
+    end
+
+    alias event type
+
     def comment?
       type == :on_comment
     end
@@ -83,6 +89,18 @@ module TagRipper
 
     def end?
       keyword? && token.match(/end/)
+    end
+
+    def close_nesting?
+      end?
+    end
+
+    def deepen_nesting?
+      taggable_definition?
+    end
+
+    def neutral_nesting?
+      !close_nesting? && !deepen_nesting?
     end
   end
 end

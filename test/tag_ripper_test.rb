@@ -18,4 +18,13 @@ class TagRipperTest < Minitest::Test
     assert_equal "Foo", taggable.name
     assert_includes_subhash taggable.tags, "domain" => ["FooDomain"]
   end
+
+  def test_detects_tag_comment_on_class_nested_in_module
+    tag_ripper = TagRipper::Ripper.new("./test/fixtures/nested_example.rb")
+
+    taggable = tag_ripper.taggables.find { |t| t.name == "Bar" }
+
+    assert_equal "Bar", taggable.name
+    assert_includes_subhash taggable.tags, "domain" => ["FooDomain"]
+  end
 end

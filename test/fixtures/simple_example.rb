@@ -6,13 +6,7 @@ require "some_file"
 #
 # @domain: FooDomain
 module Foo
-  class Bar
-    def self.method_a; end
-
-    def method_b; end
-
-    private
-
-    def method_c; end
+  def method_b
+    # noop
   end
 end
