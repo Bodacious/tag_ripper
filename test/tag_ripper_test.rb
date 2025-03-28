@@ -27,4 +27,14 @@ class TagRipperTest < Minitest::Test
     assert_equal "Bar", taggable.name
     assert_includes_subhash taggable.tags, "domain" => ["FooDomain"]
   end
+  def test_detects_modules_with_multiple_tags
+    tag_ripper = TagRipper::Ripper.new("./test/fixtures/complex_example.rb")
+
+    puts tag_ripper.taggables.inspect
+    taggable = tag_ripper.taggables.find { |t| t.name == "Foo" }
+
+    assert_equal "Foo", taggable.name
+    assert_includes_subhash taggable.tags, "domain" => ["Fizz", "Buzz"]
+  end
+
 end

@@ -24,7 +24,7 @@ module TagRipper
     end
 
     def add_tag(name, value)
-      @tags[name] = value
+      @tags[name] += value
     end
 
     attr_reader :tags
