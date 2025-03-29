@@ -16,7 +16,7 @@ module Foo
     private
 
     # This is a private method
-    # @domain: Method
+    # @domain: PrivMethod
     def method_b; end
   end
 end

@@ -3,7 +3,7 @@
 require "ripper"
 require "yaml" if ENV["DEBUG"]
 require_relative "tag_ripper/lexical_token"
-require_relative "tag_ripper/taggable"
+require_relative "tag_ripper/taggable_entity"
 
 module TagRipper
   class Ripper
@@ -18,8 +18,6 @@ module TagRipper
       @lexical_tokens = tokens.map do |(col, line), type, token, _|
         LexicalToken.new([col, line], type, token)
       end
-      @taggable_stack = TaggableStack.new(Taggable.new)
-      @return_taggables = []
     end
 
     def taggables
@@ -29,33 +27,17 @@ module TagRipper
     protected
 
     def process_taggables # rubocop:disable Metrics
-      @lexical_tokens.reject(&:ignored?).each do |lex|
-        @current_taggable ||= Taggable.new
-        next unless @current_taggable.respond_to?(lex.event)
-
-        # send the message to the current taggable
-        next_taggable = @current_taggable.public_send(lex.event, lex)
-
-        # if return value same as current taggable, then next step
-        next if next_taggable == @current_taggable
-
-        # if return value is parent the current has ended
-        if next_taggable == @current_taggable.parent
-          @return_taggables << next_taggable
-          @current_taggable = next_taggable
-          next
-        end
-        @current_taggable = next_taggable
-        next
+      return_taggables = []
+      @lexical_tokens.reject(&:ignored?)
+                     .inject(TaggableEntity.new) do |current_taggable, lex|
+        next_taggable = current_taggable.send_event(lex.event, lex)
+        return_taggables << current_taggable if current_taggable.closed?
+        next_taggable
       end
-      @return_taggables
+      return_taggables
     end
 
     private
-
-    # def current_taggable
-    #   @taggable_stack.last
-    # end
 
     def debug(message)
       return unless ENV["DEBUG"]

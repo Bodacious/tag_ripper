@@ -15,26 +15,37 @@ class TagRipperTest < Minitest::Test
 
     taggable = tag_ripper.taggables.find { |t| t.name == "Foo" }
 
+    puts tag_ripper.taggables.inspect
     assert_equal "Foo", taggable.name
-    assert_includes_subhash taggable.tags, "domain" => ["FooDomain"]
+    assert_includes taggable.tags['domain'], "FooDomain"
   end
 
   def test_detects_tag_comment_on_class_nested_in_module
     tag_ripper = TagRipper::Ripper.new("./test/fixtures/nested_example.rb")
 
     taggable = tag_ripper.taggables.find { |t| t.name == "Bar" }
-
+    puts tag_ripper.taggables.inspect
     assert_equal "Bar", taggable.name
-    assert_includes_subhash taggable.tags, "domain" => ["FooDomain"]
+    assert_includes taggable.tags['domain'], "FooDomain"
   end
+
   def test_detects_modules_with_multiple_tags
     tag_ripper = TagRipper::Ripper.new("./test/fixtures/complex_example.rb")
 
-    puts tag_ripper.taggables.inspect
     taggable = tag_ripper.taggables.find { |t| t.name == "Foo" }
 
     assert_equal "Foo", taggable.name
-    assert_includes_subhash taggable.tags, "domain" => ["Fizz", "Buzz"]
+    assert_includes taggable.tags['domain'], "Fizz"
+    assert_includes taggable.tags['domain'], "Buzz"
+  end
+
+  def test_detects_tags_on_public_methods
+    tag_ripper = TagRipper::Ripper.new("./test/fixtures/complex_example.rb")
+
+    puts tag_ripper.taggables.inspect
+    taggable = tag_ripper.taggables.find { |t| t.name == "method_a" }
+
+    assert_includes taggable.tags['domain'], "Method"
   end
 
 end
