@@ -9,7 +9,6 @@ group :development, :ci do
   gem "mutex_m", "~> 0.3"
   gem "rubocop", "~> 1.75"
   gem "rubocop-minitest", "~> 0.37"
-  gem "rubocop-performance", "~> 1.24"
   gem "rubocop-rake", "~> 0.7"
 end
 

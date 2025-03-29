@@ -41,10 +41,6 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1, < 2.0)
       rubocop-ast (>= 1.38.0, < 2.0)
-    rubocop-performance (1.24.0)
-      lint_roller (~> 1.1)
-      rubocop (>= 1.72.1, < 2.0)
-      rubocop-ast (>= 1.38.0, < 2.0)
     rubocop-rake (0.7.1)
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1)
@@ -65,7 +61,6 @@ DEPENDENCIES
   rake (~> 13.2)
   rubocop (~> 1.75)
   rubocop-minitest (~> 0.37)
-  rubocop-performance (~> 1.24)
   rubocop-rake (~> 0.7)
   tag_ripper!
 
