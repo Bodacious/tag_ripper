@@ -21,7 +21,9 @@ module TagRipper
       @except_tags.dup
     end
 
-    attr_writer :except_tags
+    def except_tags=(tags)
+      @except_tags = tags.to_set
+    end
 
     def [](value)
       public_send(value)
