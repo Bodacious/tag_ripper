@@ -15,5 +15,8 @@ Style/StringLiterals:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/TrivialAccessors:
+  Enabled: false
+
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes

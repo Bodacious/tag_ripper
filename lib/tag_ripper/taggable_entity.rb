@@ -17,6 +17,12 @@ module TagRipper
       end
     end
 
+
+    def open?
+      @open
+    end
+
+
     def closed?
       @ended
     end
@@ -39,7 +45,9 @@ module TagRipper
 
     protected
 
-    attr_reader :parent
+    def parent
+      @parent
+    end
 
     def add_tag(name, value)
       @tags[name].add(value)
@@ -57,14 +65,6 @@ module TagRipper
       @type = type.to_sym
     end
 
-    def blank?
-      name.empty? && tags.empty?
-    end
-
-    def open?
-      @open
-    end
-
     def open
       @open = true
     end
@@ -72,6 +72,7 @@ module TagRipper
     def close
       @open = false
       @ended = true
+      freeze
     end
 
     def build_child
@@ -81,7 +82,7 @@ module TagRipper
     # Lex is a comment
     def on_comment(lex)
       return self unless lex.tag_comment?
-
+      open
       receiver = named? ? build_child : self
       if TagRipper.config[:only_tags].empty? ||
          TagRipper.config[:only_tags].include?(lex.tag_name)
