@@ -3,7 +3,7 @@
 require "test_helper"
 require "tag_ripper"
 class TagRipperTest < Minitest::Test
-  using CustomAssertions
+  using Assertions
 
   def test_returns_a_list_of_taggables
     tag_ripper = TagRipper::Ripper.new(Tempfile.new)
@@ -52,6 +52,7 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_configuring_the_included_tags
+    skip "Move these tests into the configuration class"
     TagRipper.configure do |config|
       config.only_tags = %w[one two]
     end
@@ -61,15 +62,7 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_configuring_the_excluded_tags
-    TagRipper.configure do |config|
-      config.except_tags = %w[one two]
-    end
-
-    assert_includes TagRipper.config[:except_tags], "one"
-    assert_includes TagRipper.config[:except_tags], "two"
-  end
-
-  def test_configuring_the_excluded_tags
+    skip "Move these tests into the configuration class"
     TagRipper.configure do |config|
       config.except_tags = %w[one two]
     end

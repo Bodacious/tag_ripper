@@ -6,11 +6,4 @@ Bundler.setup(:default, :test)
 require "minitest/autorun"
 require "tag_ripper"
 require 'mocha/minitest'
-
-module CustomAssertions
-  refine Minitest::Assertions do
-    def assert_includes_subhash(superhash, subhash, message = nil)
-      assert_operator superhash, :>=, subhash, message
-    end
-  end
-end
+require "support/assertions"

@@ -1,5 +1,8 @@
 module TagRipper
   class LexicalToken
+
+    TAG_REGEX = /#\s@(?<tag_name>[\w_-]+):\s(?<tag_value>.+)/
+
     class Location
       attr_reader :col
       attr_reader :line
@@ -10,6 +13,7 @@ module TagRipper
         freeze
       end
     end
+    private_constant :Location
 
     attr_reader :location
 
@@ -36,7 +40,6 @@ module TagRipper
       type == :on_comment
     end
 
-    TAG_REGEX = /#\s@(?<tag_name>[\w_-]+):\s(?<tag_value>.+)/
     def tag_comment?
       # binding.irb
       comment? && token.match?(TAG_REGEX)
