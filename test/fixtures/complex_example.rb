@@ -9,7 +9,6 @@ module Foo
   # Bar class
   # @domain: FooDomain
   class Bar
-
     # @domain: Method
     def method_a; end
 

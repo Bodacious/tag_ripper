@@ -17,17 +17,17 @@ class TagRipperTest < Minitest::Test
     taggable = tag_ripper.taggables.find { |t| t.name == "Foo" }
 
     assert_equal "Foo", taggable.name
-    assert_includes taggable.tags['domain'], "FooDomain"
+    assert_includes taggable.tags["domain"], "FooDomain"
   end
 
   def test_detects_tag_comment_on_class_nested_in_module
-    code_string =  File.read("./test/fixtures/nested_example.rb")
+    code_string = File.read("./test/fixtures/nested_example.rb")
     tag_ripper = TagRipper::Ripper.new(code_string)
 
     taggable = tag_ripper.taggables.find { |t| t.name == "Bar" }
 
     assert_equal "Bar", taggable.name
-    assert_includes taggable.tags['domain'], "FooDomain"
+    assert_includes taggable.tags["domain"], "FooDomain"
   end
 
   def test_detects_modules_with_multiple_tags
@@ -37,8 +37,8 @@ class TagRipperTest < Minitest::Test
     taggable = tag_ripper.taggables.find { |t| t.name == "Foo" }
 
     assert_equal "Foo", taggable.name
-    assert_includes taggable.tags['domain'], "Fizz"
-    assert_includes taggable.tags['domain'], "Buzz"
+    assert_includes taggable.tags["domain"], "Fizz"
+    assert_includes taggable.tags["domain"], "Buzz"
   end
 
   def test_detects_tags_on_public_methods
@@ -47,7 +47,6 @@ class TagRipperTest < Minitest::Test
 
     taggable = tag_ripper.taggables.find { |t| t.name == "method_a" }
 
-    assert_includes taggable.tags['domain'], "Method"
+    assert_includes taggable.tags["domain"], "Method"
   end
-
 end

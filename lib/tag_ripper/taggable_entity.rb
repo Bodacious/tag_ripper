@@ -8,6 +8,7 @@ module TagRipper
       @type = nil
       @open = false
     end
+
     def send_event(event_name, lex)
       if respond_to? event_name, true
         send(event_name, lex)
@@ -32,7 +33,6 @@ module TagRipper
       "<id=#{id},@name=#{@name},tags=#{@tags},parent=#{@parent}>"
     end
 
-
     def tags
       @tags.dup
     end
@@ -49,7 +49,6 @@ module TagRipper
       !!@name
     end
 
-
     def name=(name)
       @name = name.to_s
     end
@@ -57,7 +56,6 @@ module TagRipper
     def type=(type)
       @type = type.to_sym
     end
-
 
     def blank?
       name.empty? && tags.empty?
@@ -75,7 +73,6 @@ module TagRipper
       @open = false
       @ended = true
     end
-
 
     def build_child
       self.class.new(parent: self)
@@ -104,17 +101,14 @@ module TagRipper
       self
     end
 
-
     alias on_kw_def on_new_taggable_context_kw
     alias on_kw_module on_new_taggable_context_kw
     alias on_kw_class on_new_taggable_context_kw
-
 
     def on_kw_end(_lex)
       close
       parent
     end
-
 
     def name_from_lex(lex)
       @name = lex.token

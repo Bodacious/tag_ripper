@@ -26,7 +26,7 @@ module TagRipper
 
     protected
 
-    def process_taggables # rubocop:disable Metrics
+    def process_taggables
       return_taggables = []
       @lexical_tokens.reject(&:ignored?)
                      .inject(TaggableEntity.new) do |current_taggable, lex|
