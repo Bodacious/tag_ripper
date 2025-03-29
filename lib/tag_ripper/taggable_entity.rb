@@ -10,7 +10,8 @@ module TagRipper
     end
 
     def send_event(event_name, lex)
-      if respond_to? event_name, true
+      if respond_to?(event_name, true)
+        puts "calling #{event_name} with #{lex.token}"
         send(event_name, lex)
       else
         self
@@ -80,6 +81,8 @@ module TagRipper
 
     # Lex is a comment
     def on_comment(lex)
+      return self unless lex.tag_comment?
+
       receiver = named? ? build_child : self
       receiver.add_tag(lex.tag_name, lex.tag_value)
       receiver

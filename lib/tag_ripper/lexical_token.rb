@@ -73,11 +73,11 @@ module TagRipper
 
     alias tag_value tag_values
 
-    def ignored?
-      IGNORED_TYPES.include?(type) ||
-        IGNORED_TYPES_AND_TOKENS[type].include?(token) ||
-        non_tag_comment?
-    end
+    # def ignore?
+    #   IGNORED_TYPES.include?(type) ||
+    #     IGNORED_TYPES_AND_TOKENS[type].include?(token) ||
+    #     non_tag_comment?
+    # end
 
     def taggable_definition?
       keyword? && token.match(/class|module|def/)
@@ -89,18 +89,6 @@ module TagRipper
 
     def end?
       keyword? && token.match(/end/)
-    end
-
-    def close_nesting?
-      end?
-    end
-
-    def deepen_nesting?
-      taggable_definition?
-    end
-
-    def neutral_nesting?
-      !close_nesting? && !deepen_nesting?
     end
   end
 end
