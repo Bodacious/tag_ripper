@@ -1,6 +1,10 @@
 module TagRipper
   class LexicalToken
+    require "forwardable"
+    extend Forwardable
+
     TAG_REGEX = /#\s@(?<tag_name>[\w_-]+):\s(?<tag_value>.+)/
+    END_TOKEN = "end".freeze
 
     class Location
       attr_reader :col
@@ -12,21 +16,19 @@ module TagRipper
         freeze
       end
     end
+
     private_constant :Location
+
+    def_delegators :location, :col, :line
 
     attr_reader :location
 
     attr_reader :type
 
-    attr_reader :token
-
-    attr_reader :state
-
-    def initialize((col, line), type, token, state = nil)
+    def initialize((col, line), type, token)
       @location = Location.new(col, line)
       @type = type.to_sym
       @token = token.to_s
-      @state = state.to_s
     end
 
     def to_s
@@ -35,13 +37,24 @@ module TagRipper
 
     alias event type
 
+    def token
+      @token.dup
+    end
+
     def comment?
       type == :on_comment
     end
 
     def tag_comment?
-      # binding.irb
       comment? && token.match?(TAG_REGEX)
+    end
+
+    def keyword?
+      type == :on_kw
+    end
+
+    def end?
+      keyword? && token == END_TOKEN
     end
 
     def tag_name
@@ -50,16 +63,10 @@ module TagRipper
       token.match(TAG_REGEX)[:tag_name]
     end
 
-    def tag_values
+    def tag_value
       return nil unless tag_comment?
 
       token.match(TAG_REGEX)[:tag_value]
-    end
-
-    alias tag_value tag_values
-
-    def end?
-      keyword? && token.match(/end/)
     end
   end
 end
