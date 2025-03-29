@@ -13,8 +13,8 @@ module TagRipper
       end
     end
 
-    def initialize(file_path)
-      tokens = ::Ripper.lex(File.read(file_path))
+    def initialize(code_string)
+      tokens = ::Ripper.lex(code_string)
       @lexical_tokens = tokens.map do |(col, line), type, token, _|
         LexicalToken.new([col, line], type, token)
       end
