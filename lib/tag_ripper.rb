@@ -1,18 +1,24 @@
 # frozen_string_literal: true
 
 require "ripper"
-require "yaml" if ENV["DEBUG"]
 require_relative "tag_ripper/lexical_token"
 require_relative "tag_ripper/taggable_entity"
+require_relative "tag_ripper/configuration"
 
 module TagRipper
-  class Ripper
-    class TaggableStack < DelegateClass(Array)
-      def initialize(*args)
-        super(args)
-      end
+  class << self
+
+    def configure(&)
+      configuration.eval_config(&)
     end
 
+    def configuration
+      @configuration ||= Configuration.new
+    end
+    alias config configuration
+  end
+
+  class Ripper
     def initialize(code_string)
       tokens = ::Ripper.lex(code_string)
       @lexical_tokens = tokens.map do |(col, line), type, token, _|
@@ -34,14 +40,6 @@ module TagRipper
         next_taggable
       end
       return_taggables
-    end
-
-    private
-
-    def debug(message)
-      return unless ENV["DEBUG"]
-
-      puts message
     end
   end
 end

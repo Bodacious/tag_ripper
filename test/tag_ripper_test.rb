@@ -4,6 +4,7 @@ require "test_helper"
 require "tag_ripper"
 class TagRipperTest < Minitest::Test
   using CustomAssertions
+
   def test_returns_a_list_of_taggables
     tag_ripper = TagRipper::Ripper.new(Tempfile.new)
 
@@ -48,5 +49,32 @@ class TagRipperTest < Minitest::Test
     taggable = tag_ripper.taggables.find { |t| t.name == "method_a" }
 
     assert_includes taggable.tags["domain"], "Method"
+  end
+
+  def test_configuring_the_included_tags
+    TagRipper.configure do |config|
+      config.only_tags = %w[one two]
+    end
+
+    assert_includes TagRipper.config[:only_tags], "one"
+    assert_includes TagRipper.config[:only_tags], "two"
+  end
+
+  def test_configuring_the_excluded_tags
+    TagRipper.configure do |config|
+      config.except_tags = %w[one two]
+    end
+
+    assert_includes TagRipper.config[:except_tags], "one"
+    assert_includes TagRipper.config[:except_tags], "two"
+  end
+
+  def test_configuring_the_excluded_tags
+    TagRipper.configure do |config|
+      config.except_tags = %w[one two]
+    end
+
+    assert_includes TagRipper.config[:except_tags], "one"
+    assert_includes TagRipper.config[:except_tags], "two"
   end
 end

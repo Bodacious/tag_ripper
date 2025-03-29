@@ -11,7 +11,6 @@ module TagRipper
 
     def send_event(event_name, lex)
       if respond_to?(event_name, true)
-        puts "calling #{event_name} with #{lex.token}"
         send(event_name, lex)
       else
         self
@@ -43,7 +42,7 @@ module TagRipper
     attr_reader :parent
 
     def add_tag(name, value)
-      @tags[name] += value
+      @tags[name].add(value)
     end
 
     def named?
@@ -84,7 +83,10 @@ module TagRipper
       return self unless lex.tag_comment?
 
       receiver = named? ? build_child : self
-      receiver.add_tag(lex.tag_name, lex.tag_value)
+      if TagRipper.config[:only_tags].empty? ||
+         TagRipper.config[:only_tags].include?(lex.tag_name)
+        receiver.add_tag(lex.tag_name, lex.tag_value)
+      end
       receiver
     end
 

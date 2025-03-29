@@ -36,16 +36,22 @@ module TagRipper
       type == :on_comment
     end
 
+    TAG_REGEX = /#\s@(?<tag_name>[\w_-]+):\s(?<tag_value>.+)/
     def tag_comment?
-      comment? && token.match?(/# @domain: (.+)/)
+      # binding.irb
+      comment? && token.match?(TAG_REGEX)
     end
 
     def tag_name
-      "domain"
+      return nil unless tag_comment?
+
+      token.match(TAG_REGEX)[:tag_name]
     end
 
     def tag_values
-      token.scan(/# @domain: (.+)/)[0]
+      return nil unless tag_comment?
+
+      token.match(TAG_REGEX)[:tag_value]
     end
 
     alias tag_value tag_values

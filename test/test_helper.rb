@@ -5,6 +5,7 @@ require "bundler"
 Bundler.setup(:default, :test)
 require "minitest/autorun"
 require "tag_ripper"
+require 'mocha/minitest'
 
 module CustomAssertions
   refine Minitest::Assertions do
