@@ -1,5 +1,7 @@
 module TagRipper
   class Ripper
+    require "ripper"
+
     def initialize(code_string)
       tokens = ::Ripper.lex(code_string)
       @lexical_tokens = tokens.map do |(col, line), type, token, _|

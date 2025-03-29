@@ -1,4 +1,13 @@
 module TagRipper
+  # Follows the state changes of a taggable entity (class, model, or method)
+  # as it responds to various Lexical tokens.
+  # The idea here is that this class will mutate on each new 'event', where
+  # and event is the presence of a new lexical token.
+  #
+  # TaggableEntities begin in a pre-open state, and become open when their
+  # lexical scope opens up. When a new lexical nesting is detected, a child
+  # entity is spawned. This creates a sort of recursion that allows a taggable
+  # entity to be flexible to any amount of code nesting.
   class TaggableEntity
     def initialize(name: nil, parent: nil)
       @name = name
@@ -25,14 +34,6 @@ module TagRipper
       @ended
     end
 
-    def name
-      @name.to_s.dup
-    end
-
-    # private
-
-    alias id object_id
-
     def inspect
       "<id=#{id},@name=#{@name},tags=#{@tags},parent=#{@parent}>"
     end
@@ -41,7 +42,15 @@ module TagRipper
       @tags.dup
     end
 
+    def name
+      @name.to_s.dup
+    end
+
     protected
+
+    # private
+
+    alias id object_id
 
     def parent
       @parent

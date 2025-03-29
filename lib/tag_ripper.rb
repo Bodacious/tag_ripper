@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require "set" unless defined?(Set)
-require "ripper"
+
+require_relative "tag_ripper/ripper"
 require_relative "tag_ripper/lexical_token"
 require_relative "tag_ripper/taggable_entity"
 require_relative "tag_ripper/configuration"
