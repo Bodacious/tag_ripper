@@ -3,12 +3,17 @@
 source "https://rubygems.org"
 gemspec
 
-gem "rake"
+group :development, :ci do
+  gem "rake", "~> 13.2"
 
-gem "minitest"
-gem "mocha", "~> 2.7"
-gem "mutex_m", "~> 0.3.0"
-gem "rubocop"
-gem "rubocop-minitest"
-gem "rubocop-performance"
-gem "rubocop-rake"
+  gem "mutex_m", "~> 0.3"
+  gem "rubocop", "~> 1.75"
+  gem "rubocop-minitest", "~> 0.37"
+  gem "rubocop-performance", "~> 1.24"
+  gem "rubocop-rake", "~> 0.7"
+end
+
+group :test do
+  gem "minitest", "~> 5.25"
+  gem "mocha", "~> 2.7"
+end
