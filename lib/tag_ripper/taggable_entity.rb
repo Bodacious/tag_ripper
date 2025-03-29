@@ -17,11 +17,9 @@ module TagRipper
       end
     end
 
-
     def open?
       @open
     end
-
 
     def closed?
       @ended
@@ -82,6 +80,7 @@ module TagRipper
     # Lex is a comment
     def on_comment(lex)
       return self unless lex.tag_comment?
+
       open
       receiver = named? ? build_child : self
       if TagRipper.config[:only_tags].empty? ||
