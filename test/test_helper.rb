@@ -5,5 +5,5 @@ require "bundler"
 Bundler.setup(:default, :test)
 require "minitest/autorun"
 require "tag_ripper"
-require 'mocha/minitest'
+require "mocha/minitest"
 require "support/assertions"

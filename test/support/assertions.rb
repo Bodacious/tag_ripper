@@ -1,4 +1,3 @@
-
 module Assertions
   refine Minitest::Assertions do
     def assert_includes_subhash(superhash, subhash, message = nil)

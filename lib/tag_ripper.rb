@@ -7,7 +7,6 @@ require_relative "tag_ripper/configuration"
 
 module TagRipper
   class << self
-
     def configure(&)
       configuration.eval_config(&)
     end

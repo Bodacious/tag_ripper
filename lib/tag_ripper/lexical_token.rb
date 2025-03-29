@@ -1,6 +1,5 @@
 module TagRipper
   class LexicalToken
-
     TAG_REGEX = /#\s@(?<tag_name>[\w_-]+):\s(?<tag_value>.+)/
 
     class Location
