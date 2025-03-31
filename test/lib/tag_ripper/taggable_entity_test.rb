@@ -110,20 +110,51 @@ module TagRipper
     end
     def test_may_not_await_name_if_named?
       subject = described_class.new
+      subject.await_name!
       subject.name = 'name'
       refute_predicate subject, :may_await_name?
     end
 
     def test_may_not_tag_if_named?
       subject = described_class.new
+      subject.await_name!
       subject.name = 'name'
       refute_predicate subject, :may_tag?
     end
 
     def test_may_close_if_named?
       subject = described_class.new
+      subject.await_name!
       subject.name = 'name'
       assert_predicate subject, :may_close?
+    end
+
+    def test_tag_raises_an_exception_if_may_not_tag?
+      subject = described_class.new
+      subject.expects(:may_tag?).returns(false)
+      assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
+                    "Cannot transition from pending to tagged") do
+        subject.tag!('tag-name', 'tag-value')
+      end
+    end
+
+
+    def test_await_name_raises_an_exception_if_may_not_await_name
+      subject = described_class.new
+      subject.expects(:may_await_name?).returns(false)
+      assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
+                    "Cannot transition from pending to awaiting_name") do
+        subject.await_name!
+      end
+    end
+
+    def test_name_raises_an_exception_if_may_not_set_name
+      subject = described_class.new
+      subject.expects(:may_name?).returns(false)
+      assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
+                    "Cannot transition from pending to named") do
+        subject.name = 'entity-name'
+      end
     end
 
     def test_tag_adds_tags_and_changes_status_to_tagged?
@@ -147,8 +178,8 @@ module TagRipper
 
     def test_name_changes_status_to_named?
       subject = described_class.new
+      subject.await_name!
       refute_predicate subject, :named?
-
       subject.name = 'foobar'
 
       assert_predicate subject, :named?

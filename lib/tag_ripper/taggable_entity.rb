@@ -9,7 +9,15 @@ module TagRipper
   # entity is spawned. This creates a sort of recursion that allows a taggable
   # entity to be flexible to any amount of code nesting.
   class TaggableEntity
+    class IllegalStateTransitionError < StandardError
+
+      def initialize(from: , to: )
+        super("Cannot transition from #{from} to #{to}")
+      end
+    end
+
     OPENED_STATUSES = %i[tagged awaiting_name named].freeze
+
     def initialize(name: nil, parent: nil)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
@@ -21,6 +29,7 @@ module TagRipper
 
     def send_event(event_name, lex)
       if respond_to?(event_name, true)
+        puts "Sending #{event_name} - #{lex.token}"
         send(event_name, lex)
       else
         self
@@ -38,13 +47,30 @@ module TagRipper
     end
 
     def tag!(tag_name, tag_value)
+      unless may_tag?
+        raise IllegalStateTransitionError.new(from: @status, to: :tagged)
+      end
+
       @status = :tagged
 
       add_tag(tag_name, tag_value)
     end
 
     def await_name!
+      unless may_await_name?
+        raise IllegalStateTransitionError.new(from: @status, to: :awaiting_name)
+      end
+
       @status = :awaiting_name
+    end
+
+    def name=(name)
+      unless may_name?
+        raise IllegalStateTransitionError.new(from: @status, to: :named)
+      end
+
+      @name = name.to_s
+      @status = :named
     end
 
     def close!
@@ -86,10 +112,6 @@ module TagRipper
       @name.to_s.dup
     end
 
-    def name=(name)
-      @name = name.to_s
-      @status = :named
-    end
 
     protected
 
@@ -138,11 +160,14 @@ module TagRipper
     end
 
     def on_new_taggable_context_kw(_lex)
-      return build_child if named?
+      if named?
+        returnable_entity = build_child
+        returnable_entity.await_name!
+      else
+        returnable_entity = self
+      end
 
-      await_name!
-
-      self
+      returnable_entity
     end
 
     alias on_kw_def on_new_taggable_context_kw
@@ -154,7 +179,11 @@ module TagRipper
       parent
     end
 
+    IGNORED_NAME_SOURCES = ['require']
+
     def name_from_lex(lex)
+      return self if IGNORED_NAME_SOURCES.include?(lex.token)
+      puts "name_from_lex(#{lex.token}) #{@status}"
       self.name = lex.token
       self.type = lex.type
       self
