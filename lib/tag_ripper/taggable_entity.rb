@@ -15,7 +15,7 @@ module TagRipper
       @ended = false
       @parent = parent
       @type = nil
-      @open = false
+      @status = :pending
     end
 
     def send_event(event_name, lex)
@@ -26,8 +26,33 @@ module TagRipper
       end
     end
 
+    def pending? = @status == :pending
+
+    def tagged? = @status == :tagged
+
+    def awaiting_name? = @status == :awaiting_name
+
+    OPENED_STATUSES = %i[tagged awaiting_name named ].freeze
     def open?
-      @open
+      OPENED_STATUSES.include?(@status)
+    end
+
+    def tag!(tag_name, tag_value)
+      @status = :tagged
+
+      add_tag(tag_name, tag_value)
+    end
+
+    def await_name!
+      @status = :awaiting_name
+    end
+
+
+    def close!
+      @open = false
+      @ended = true
+      @status = :closed
+      freeze
     end
 
     def closed?
@@ -45,6 +70,13 @@ module TagRipper
     def name
       @name.to_s.dup
     end
+
+
+    def name=(name)
+      @name = name.to_s
+      @status = :named
+    end
+
 
     protected
 
@@ -64,22 +96,8 @@ module TagRipper
       !!@name
     end
 
-    def name=(name)
-      @name = name.to_s
-    end
-
     def type=(type)
       @type = type.to_sym
-    end
-
-    def open
-      @open = true
-    end
-
-    def close
-      @open = false
-      @ended = true
-      freeze
     end
 
     def build_child
@@ -90,11 +108,10 @@ module TagRipper
     def on_comment(lex)
       return self unless lex.tag_comment?
 
-      open
       receiver = named? ? build_child : self
       if TagRipper.config[:only_tags].empty? ||
          TagRipper.config[:only_tags].include?(lex.tag_name)
-        receiver.add_tag(lex.tag_name, lex.tag_value)
+        receiver.tag!(lex.tag_name, lex.tag_value)
       end
       receiver
     end
@@ -110,7 +127,7 @@ module TagRipper
     def on_new_taggable_context_kw(_lex)
       return build_child if named?
 
-      open
+      await_name!
 
       self
     end
@@ -120,13 +137,13 @@ module TagRipper
     alias on_kw_class on_new_taggable_context_kw
 
     def on_kw_end(_lex)
-      close
+      close!
       parent
     end
 
     def name_from_lex(lex)
-      @name = lex.token
-      @type = lex.type
+      self.name = lex.token
+      self.type = lex.type
       self
     end
 

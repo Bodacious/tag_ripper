@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+
 module TagRipper
   class TaggableEntityTest < Minitest::Test
     using Assertions
@@ -40,6 +41,56 @@ module TagRipper
       subject.send_event(lex.event, lex)
 
       assert_predicate subject, :open?
+    end
+
+    def test_it_initializes_as_pending?
+      subject = described_class.new
+
+      assert_predicate subject, :pending?
+    end
+
+    def test_tag_adds_tags_and_changes_status_to_tagged?
+      subject = described_class.new
+
+      refute_predicate subject, :tagged?
+
+      subject.tag!('foo', 'bar')
+
+      assert_predicate subject, :tagged?
+    end
+
+    def test_await_name_changes_status_to_awaiting_name
+      subject = described_class.new
+      refute_predicate subject, :awaiting_name?
+
+      subject.await_name!
+
+      assert_predicate subject, :awaiting_name?
+    end
+
+    def test_name_changes_status_to_named?
+      subject = described_class.new
+      refute_predicate subject, :named?
+
+      subject.name = 'foobar'
+
+      assert_predicate subject, :named?
+    end
+
+    def test_it_sets_status_to_closed_on_close
+      subject = described_class.new
+      refute_predicate subject, :closed?
+      subject.close!
+
+      assert_predicate subject, :closed?
+    end
+
+    def test_it_freezes_on_close
+      subject = described_class.new
+      refute_predicate subject, :frozen?
+      subject.close!
+
+      assert_predicate subject, :frozen?
     end
   end
 end
