@@ -49,6 +49,83 @@ module TagRipper
       assert_predicate subject, :pending?
     end
 
+    def test_may_tag_if_pending
+      subject = described_class.new
+
+      assert_predicate subject, :may_tag?
+    end
+
+    def test_may_await_name_if_pending
+      subject = described_class.new
+
+      assert_predicate subject, :may_await_name?
+    end
+
+    def test_may_not_name_if_pending
+      subject = described_class.new
+
+      refute_predicate subject, :may_name?
+    end
+
+    def test_may_not_close_if_pending
+      subject = described_class.new
+
+      refute_predicate subject, :may_close?
+    end
+
+    def test_may_await_name_if_tagged
+      subject = described_class.new
+      subject.tag!('foo', 'bar')
+      assert_predicate subject, :may_await_name?
+    end
+
+    def test_may_not_name_if_tagged
+      subject = described_class.new
+      subject.tag!('foo', 'bar')
+      refute_predicate subject, :may_name?
+    end
+
+    def test_may_not_close_if_tagged
+      subject = described_class.new
+      subject.tag!('foo', 'bar')
+      refute_predicate subject, :may_close?
+    end
+
+    def may_name_if_awaiting_name
+      subject = described_class.new
+      subject.await_name!
+      assert_predicate subject, :may_name?
+    end
+
+    def may_not_tag_if_awaiting_name
+      subject = described_class.new
+      subject.await_name!
+      refute_predicate subject, :may_tag?
+    end
+
+    def may_not_close_if_awaiting_name
+      subject = described_class.new
+      subject.await_name!
+      refute_predicate subject, :may_close?
+    end
+    def test_may_not_await_name_if_named?
+      subject = described_class.new
+      subject.name = 'name'
+      refute_predicate subject, :may_await_name?
+    end
+
+    def test_may_not_tag_if_named?
+      subject = described_class.new
+      subject.name = 'name'
+      refute_predicate subject, :may_tag?
+    end
+
+    def test_may_close_if_named?
+      subject = described_class.new
+      subject.name = 'name'
+      assert_predicate subject, :may_close?
+    end
+
     def test_tag_adds_tags_and_changes_status_to_tagged?
       subject = described_class.new
 

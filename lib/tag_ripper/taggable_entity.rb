@@ -9,6 +9,7 @@ module TagRipper
   # entity is spawned. This creates a sort of recursion that allows a taggable
   # entity to be flexible to any amount of code nesting.
   class TaggableEntity
+    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
     def initialize(name: nil, parent: nil)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
@@ -32,7 +33,6 @@ module TagRipper
 
     def awaiting_name? = @status == :awaiting_name
 
-    OPENED_STATUSES = %i[tagged awaiting_name named ].freeze
     def open?
       OPENED_STATUSES.include?(@status)
     end
@@ -47,7 +47,6 @@ module TagRipper
       @status = :awaiting_name
     end
 
-
     def close!
       @open = false
       @ended = true
@@ -56,7 +55,23 @@ module TagRipper
     end
 
     def closed?
-      @ended
+      @status == :closed
+    end
+
+    def may_tag?
+      pending? | tagged?
+    end
+
+    def may_await_name?
+      pending? | tagged?
+    end
+
+    def may_name?
+      awaiting_name?
+    end
+
+    def may_close?
+      named?
     end
 
     def inspect
@@ -71,12 +86,10 @@ module TagRipper
       @name.to_s.dup
     end
 
-
     def name=(name)
       @name = name.to_s
       @status = :named
     end
-
 
     protected
 
