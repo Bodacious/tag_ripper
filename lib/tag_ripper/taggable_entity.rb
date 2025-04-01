@@ -15,7 +15,6 @@ module TagRipper
       end
     end
 
-    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
 
     def initialize(name: nil, parent: nil)
       @name = name
@@ -47,6 +46,8 @@ module TagRipper
     def tagged? = @status == :tagged
 
     def awaiting_name? = @status == :awaiting_name
+
+    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
 
     def open?
       OPENED_STATUSES.include?(@status)

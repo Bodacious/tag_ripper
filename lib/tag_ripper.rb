@@ -13,8 +13,12 @@ module TagRipper
     end
 
     def configuration
-      @configuration ||= Configuration.new
+      @configuration ||= reset_configuration!
     end
     alias config configuration
+
+    def reset_configuration!
+      @configuration = Configuration.new
+    end
   end
 end

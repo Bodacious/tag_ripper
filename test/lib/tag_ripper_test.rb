@@ -5,6 +5,25 @@ require "tag_ripper"
 class TagRipperTest < Minitest::Test
   using Assertions
 
+  def setup
+
+  end
+
+  def teardown
+    TagRipper.reset_configuration!
+  end
+
+  def test_reset_configuration_replaces_configuration_with_new_blank_config
+    TagRipper.configure do |config|
+      config.only_tags = ['foo', 'bar']
+    end
+    assert_includes TagRipper.configuration.only_tags, 'foo'
+    assert_includes TagRipper.configuration.only_tags, 'bar'
+
+    TagRipper.reset_configuration!
+
+    assert_empty TagRipper.configuration.only_tags
+  end
   def test_returns_a_list_of_taggables
     tag_ripper = TagRipper::Ripper.new(Tempfile.new)
 

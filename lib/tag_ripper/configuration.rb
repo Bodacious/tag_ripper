@@ -2,7 +2,7 @@ module TagRipper
   class Configuration
     def initialize
       @only_tags = Set.new
-      @exclude_tags = Set.new
+      @except_tags = Set.new
     end
 
     def eval_config(&block)
