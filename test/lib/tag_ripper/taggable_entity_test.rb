@@ -229,5 +229,21 @@ module TagRipper
 
       assert_equal "A::B::C", c.fully_qualified_name
     end
+
+    def test_fully_qualified_name_when_last_item_is_an_instance_method
+      a = described_class.new
+      a.send_event(:on_kw, stub('Lex', token: 'module', event: :on_kw, on_kw_type: :module))
+      a.send_event(:on_ident, stub('Lex', token: 'Foo', event: :on_ident))
+
+      b = described_class.new(parent: a)
+      b.send_event(:on_kw, stub('Lex', token: 'class', event: :on_kw, on_kw_type: :class))
+      b.send_event(:on_ident, stub('Lex', token: 'Bar', event: :on_ident))
+
+      c = described_class.new(parent: b)
+      c.send_event(:on_kw, stub('Lex', token: 'def', event: :on_kw, on_kw_type: :instance_method))
+      c.send_event(:on_ident, stub('Lex', token: 'method_c', event: :on_ident))
+
+      assert_equal "Foo::Bar#method_c", c.fully_qualified_name
+    end
   end
 end

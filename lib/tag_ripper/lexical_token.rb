@@ -68,5 +68,17 @@ module TagRipper
 
       token.match(TAG_REGEX)[:tag_value]
     end
+
+    def on_kw_type
+      return nil unless keyword?
+
+      case token
+      when 'const' then :class
+      when 'module' then :module
+      when 'def' then  :instance_method
+      else
+        :unknown
+      end
+    end
   end
 end

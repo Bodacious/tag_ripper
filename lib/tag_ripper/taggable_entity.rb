@@ -34,7 +34,11 @@ module TagRipper
     end
 
     def fqn
-      fqn_names.join("::")
+      if @type == :instance_method
+        fqn_names[0..-2].join("::") + "##{name}"
+      else
+        fqn_names.join("::")
+        end
     end
     alias fully_qualified_name fqn
 
@@ -113,6 +117,12 @@ module TagRipper
       @name.to_s.dup
     end
 
+
+    def type=(type)
+      @type = type.to_sym
+    end
+
+
     protected
 
     alias id object_id
@@ -135,10 +145,6 @@ module TagRipper
       !!@name
     end
 
-    def type=(type)
-      @type = type.to_sym
-    end
-
     def build_child
       self.class.new(parent: self)
     end
@@ -148,8 +154,8 @@ module TagRipper
       return self unless lex.tag_comment?
 
       receiver = named? ? build_child : self
-      if TagRipper.config[:only_tags].empty? ||
-         TagRipper.config[:only_tags].include?(lex.tag_name)
+      if TagRipper.config.only_tags.empty? ||
+         TagRipper.config.only_tags.include?(lex.tag_name)
         receiver.tag!(lex.tag_name, lex.tag_value)
       end
       receiver
@@ -163,14 +169,11 @@ module TagRipper
       send(event_token_method_name, lex)
     end
 
-    def on_new_taggable_context_kw(_lex)
-      returnable_entity = if named?
-                            build_child
-                          else
-                            self
-                          end
+    def on_new_taggable_context_kw(lex)
+      returnable_entity = named? ? build_child : self
       returnable_entity.await_name!
-
+      puts "Lex #{lex.on_kw_type}"
+      self.type = lex.on_kw_type
       returnable_entity
     end
 
@@ -178,10 +181,6 @@ module TagRipper
     alias on_kw_module on_new_taggable_context_kw
     alias on_kw_class on_new_taggable_context_kw
 
-    def on_kw_end(_lex)
-      close!
-      parent
-    end
 
     IGNORED_IDENT_KEYWORDS = %w[require private].freeze
     private_constant :IGNORED_IDENT_KEYWORDS
@@ -191,11 +190,15 @@ module TagRipper
       return self if named?
 
       self.name = lex.token
-      self.type = lex.type
       self
     end
 
     alias on_const name_from_lex
     alias on_ident name_from_lex
+
+    def on_kw_end(_lex)
+      close!
+      parent
+    end
   end
 end

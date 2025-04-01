@@ -24,9 +24,5 @@ module TagRipper
     def except_tags=(tags)
       @except_tags = tags.to_set
     end
-
-    def [](value)
-      public_send(value)
-    end
   end
 end
