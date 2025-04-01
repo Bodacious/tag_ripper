@@ -9,6 +9,9 @@ AllCops:
   NewCops: enable
   SuggestExtensions: true
 
+Metrics/ClassLength:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
@@ -20,3 +23,4 @@ Style/TrivialAccessors:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+

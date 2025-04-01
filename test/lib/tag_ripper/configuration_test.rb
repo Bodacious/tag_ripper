@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 module TagRipper
   class ConfigurationTest < Minitest::Test
@@ -21,6 +21,5 @@ module TagRipper
       assert_includes TagRipper.config[:except_tags], "one"
       assert_includes TagRipper.config[:except_tags], "two"
     end
-
   end
 end

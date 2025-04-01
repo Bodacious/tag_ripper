@@ -12,9 +12,8 @@ group :development, :ci do
 end
 
 group :test do
-  gem "mutex_m", "~> 0.3"
+  gem "logger", "~> 1.7"
   gem "minitest", "~> 5.25"
   gem "mocha", "~> 2.7"
-  gem "logger", "~> 1.7"
+  gem "mutex_m", "~> 0.3"
 end
-

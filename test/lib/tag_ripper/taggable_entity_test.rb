@@ -75,57 +75,67 @@ module TagRipper
 
     def test_may_await_name_if_tagged
       subject = described_class.new
-      subject.tag!('foo', 'bar')
+      subject.tag!("foo", "bar")
+
       assert_predicate subject, :may_await_name?
     end
 
     def test_may_not_name_if_tagged
       subject = described_class.new
-      subject.tag!('foo', 'bar')
+      subject.tag!("foo", "bar")
+
       refute_predicate subject, :may_name?
     end
 
     def test_may_not_close_if_tagged
       subject = described_class.new
-      subject.tag!('foo', 'bar')
+      subject.tag!("foo", "bar")
+
       refute_predicate subject, :may_close?
     end
 
-    def may_name_if_awaiting_name
+    def test_may_name_if_awaiting_name
       subject = described_class.new
       subject.await_name!
+
       assert_predicate subject, :may_name?
     end
 
-    def may_not_tag_if_awaiting_name
+    def test_may_not_tag_if_awaiting_name
       subject = described_class.new
       subject.await_name!
+
       refute_predicate subject, :may_tag?
     end
 
-    def may_not_close_if_awaiting_name
+    def test_may_not_close_if_awaiting_name
       subject = described_class.new
       subject.await_name!
+
       refute_predicate subject, :may_close?
     end
+
     def test_may_not_await_name_if_named?
       subject = described_class.new
       subject.await_name!
-      subject.name = 'name'
+      subject.name = "name"
+
       refute_predicate subject, :may_await_name?
     end
 
     def test_may_not_tag_if_named?
       subject = described_class.new
       subject.await_name!
-      subject.name = 'name'
+      subject.name = "name"
+
       refute_predicate subject, :may_tag?
     end
 
     def test_may_close_if_named?
       subject = described_class.new
       subject.await_name!
-      subject.name = 'name'
+      subject.name = "name"
+
       assert_predicate subject, :may_close?
     end
 
@@ -134,10 +144,9 @@ module TagRipper
       subject.expects(:may_tag?).returns(false)
       assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
                     "Cannot transition from pending to tagged") do
-        subject.tag!('tag-name', 'tag-value')
+        subject.tag!("tag-name", "tag-value")
       end
     end
-
 
     def test_await_name_raises_an_exception_if_may_not_await_name
       subject = described_class.new
@@ -153,7 +162,7 @@ module TagRipper
       subject.expects(:may_name?).returns(false)
       assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
                     "Cannot transition from pending to named") do
-        subject.name = 'entity-name'
+        subject.name = "entity-name"
       end
     end
 
@@ -162,13 +171,14 @@ module TagRipper
 
       refute_predicate subject, :tagged?
 
-      subject.tag!('foo', 'bar')
+      subject.tag!("foo", "bar")
 
       assert_predicate subject, :tagged?
     end
 
     def test_await_name_changes_status_to_awaiting_name
       subject = described_class.new
+
       refute_predicate subject, :awaiting_name?
 
       subject.await_name!
@@ -179,14 +189,16 @@ module TagRipper
     def test_name_changes_status_to_named?
       subject = described_class.new
       subject.await_name!
+
       refute_predicate subject, :named?
-      subject.name = 'foobar'
+      subject.name = "foobar"
 
       assert_predicate subject, :named?
     end
 
     def test_it_sets_status_to_closed_on_close
       subject = described_class.new
+
       refute_predicate subject, :closed?
       subject.close!
 
@@ -195,6 +207,7 @@ module TagRipper
 
     def test_it_freezes_on_close
       subject = described_class.new
+
       refute_predicate subject, :frozen?
       subject.close!
 
@@ -202,13 +215,13 @@ module TagRipper
     end
 
     def test_fully_qualified_name_returns_the_names_of_the_parents_too
-      a = described_class.new()
+      a = described_class.new
       a.await_name!
-      a.name = 'A'
+      a.name = "A"
 
       b = described_class.new(parent: a)
       b.await_name!
-      b.name = 'B'
+      b.name = "B"
 
       c = described_class.new(parent: b)
       c.await_name!

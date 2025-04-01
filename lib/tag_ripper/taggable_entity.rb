@@ -10,8 +10,7 @@ module TagRipper
   # entity to be flexible to any amount of code nesting.
   class TaggableEntity
     class IllegalStateTransitionError < StandardError
-
-      def initialize(from: , to: )
+      def initialize(from:, to:)
         super("Cannot transition from #{from} to #{to}")
       end
     end
@@ -34,13 +33,10 @@ module TagRipper
       end
     end
 
-
     def fqn
       fqn_names.join("::")
     end
     alias fully_qualified_name fqn
-
-
 
     def pending? = @status == :pending
 
@@ -117,10 +113,7 @@ module TagRipper
       @name.to_s.dup
     end
 
-
     protected
-
-
 
     alias id object_id
 
@@ -171,11 +164,11 @@ module TagRipper
     end
 
     def on_new_taggable_context_kw(_lex)
-      if named?
-        returnable_entity = build_child
-      else
-        returnable_entity = self
-      end
+      returnable_entity = if named?
+                            build_child
+                          else
+                            self
+                          end
       returnable_entity.await_name!
 
       returnable_entity
@@ -190,7 +183,7 @@ module TagRipper
       parent
     end
 
-    IGNORED_IDENT_KEYWORDS = %w[ require private ].freeze
+    IGNORED_IDENT_KEYWORDS = %w[require private].freeze
     private_constant :IGNORED_IDENT_KEYWORDS
 
     def name_from_lex(lex)
