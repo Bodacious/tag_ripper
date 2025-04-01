@@ -18,6 +18,8 @@ module TagRipper
     def process_taggables
       return_taggables = []
       @lexical_tokens.inject(TaggableEntity.new) do |current_taggable, lex|
+        break if current_taggable.nil?
+
         next_taggable = current_taggable.send_event(lex.event, lex)
         return_taggables << current_taggable if current_taggable.closed?
         next_taggable

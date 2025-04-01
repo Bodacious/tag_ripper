@@ -10,7 +10,13 @@ module Foo
   # @domain: FooDomain
   class Bar
     # @domain: Method
-    def method_a; end
+    def method_a(foo)
+      case foo
+      when :fizz then "buzz"
+      else
+        "bar"
+      end
+    end
 
     private
 

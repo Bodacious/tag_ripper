@@ -21,7 +21,6 @@ module TagRipper
     def initialize(name: nil, parent: nil)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
-      @ended = false
       @parent = parent
       @type = nil
       @status = :pending
@@ -29,12 +28,19 @@ module TagRipper
 
     def send_event(event_name, lex)
       if respond_to?(event_name, true)
-        puts "Sending #{event_name} - #{lex.token}"
         send(event_name, lex)
       else
         self
       end
     end
+
+
+    def fqn
+      fqn_names.join("::")
+    end
+    alias fully_qualified_name fqn
+
+
 
     def pending? = @status == :pending
 
@@ -75,7 +81,6 @@ module TagRipper
 
     def close!
       @open = false
-      @ended = true
       @status = :closed
       freeze
     end
@@ -115,9 +120,15 @@ module TagRipper
 
     protected
 
-    # private
+
 
     alias id object_id
+
+    def fqn_names
+      return [name] if parent.nil?
+
+      [*parent.fqn_names, name]
+    end
 
     def parent
       @parent
@@ -162,10 +173,10 @@ module TagRipper
     def on_new_taggable_context_kw(_lex)
       if named?
         returnable_entity = build_child
-        returnable_entity.await_name!
       else
         returnable_entity = self
       end
+      returnable_entity.await_name!
 
       returnable_entity
     end
@@ -179,11 +190,13 @@ module TagRipper
       parent
     end
 
-    IGNORED_NAME_SOURCES = ['require']
+    IGNORED_IDENT_KEYWORDS = %w[ require private ].freeze
+    private_constant :IGNORED_IDENT_KEYWORDS
 
     def name_from_lex(lex)
-      return self if IGNORED_NAME_SOURCES.include?(lex.token)
-      puts "name_from_lex(#{lex.token}) #{@status}"
+      return self if IGNORED_IDENT_KEYWORDS.include?(lex.token)
+      return self if named?
+
       self.name = lex.token
       self.type = lex.type
       self

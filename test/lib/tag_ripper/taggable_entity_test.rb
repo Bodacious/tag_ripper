@@ -200,5 +200,21 @@ module TagRipper
 
       assert_predicate subject, :frozen?
     end
+
+    def test_fully_qualified_name_returns_the_names_of_the_parents_too
+      a = described_class.new()
+      a.await_name!
+      a.name = 'A'
+
+      b = described_class.new(parent: a)
+      b.await_name!
+      b.name = 'B'
+
+      c = described_class.new(parent: b)
+      c.await_name!
+      c.name = "C"
+
+      assert_equal "A::B::C", c.fully_qualified_name
+    end
   end
 end
