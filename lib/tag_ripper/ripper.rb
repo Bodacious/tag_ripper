@@ -1,5 +1,7 @@
 module TagRipper
   class Ripper
+    # Ruby's Ripper lib
+    # https://ruby-doc.org/stdlib-2.5.1/libdoc/ripper/rdoc/Ripper.html
     require "ripper"
 
     def initialize(code_string)

@@ -13,6 +13,7 @@ module TagRipper
 
       assert_empty subject.except_tags
     end
+
     def test_configuration_can_be_set_via_a_block
       subject = described_class.new
       subject.eval_config do |config|

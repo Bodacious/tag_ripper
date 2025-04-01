@@ -15,7 +15,6 @@ module TagRipper
       end
     end
 
-
     def initialize(name: nil, parent: nil)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
@@ -37,7 +36,7 @@ module TagRipper
         fqn_names[0..-2].join("::") + "##{name}"
       else
         fqn_names.join("::")
-        end
+      end
     end
     alias fully_qualified_name fqn
 
@@ -118,11 +117,9 @@ module TagRipper
       @name.to_s.dup
     end
 
-
     def type=(type)
       @type = type.to_sym
     end
-
 
     protected
 
@@ -181,7 +178,6 @@ module TagRipper
     alias on_kw_def on_new_taggable_context_kw
     alias on_kw_module on_new_taggable_context_kw
     alias on_kw_class on_new_taggable_context_kw
-
 
     IGNORED_IDENT_KEYWORDS = %w[require private].freeze
     private_constant :IGNORED_IDENT_KEYWORDS

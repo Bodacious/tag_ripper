@@ -73,9 +73,9 @@ module TagRipper
       return nil unless keyword?
 
       case token
-      when 'const' then :class
-      when 'module' then :module
-      when 'def' then  :instance_method
+      when "const" then :class
+      when "module" then :module
+      when "def" then :instance_method
       else
         :unknown
       end
