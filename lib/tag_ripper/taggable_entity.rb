@@ -24,6 +24,7 @@ module TagRipper
     end
 
     def send_event(event_name, lex)
+      puts "send_event: #{event_name} - #{lex} #(#{@status})"
       if respond_to?(event_name, true)
         send(event_name, lex)
       else
@@ -31,7 +32,17 @@ module TagRipper
       end
     end
 
+    def module?
+      (type == :module) | (type == :class)
+    end
+
+    def type
+      @type
+    end
     def fqn
+      return nil unless named?
+      return name if fqn_names.size == 1
+
       if type == :instance_method
         fqn_names[0..-2].join("::") + "##{name}"
       else
@@ -180,12 +191,13 @@ module TagRipper
     alias on_kw_module on_new_taggable_context_kw
     alias on_kw_class on_new_taggable_context_kw
 
-    IGNORED_IDENT_KEYWORDS = %w[require private].freeze
+    IGNORED_IDENT_KEYWORDS = %w[require private class_eval instance_eval define_method].freeze
     private_constant :IGNORED_IDENT_KEYWORDS
 
     def name_from_lex(lex)
       return self if IGNORED_IDENT_KEYWORDS.include?(lex.token)
       return self if named?
+      return self unless may_name?
 
       self.name = lex.token
       self
