@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = "Rips tags from Ruby code"
   spec.description = "Add tags to your Ruby code comments and then Rip the as lexical tokens"
-  spec.homepage = "https://github.com/Bodacious/tag-ripper/"
+  spec.homepage = "https://github.com/Bodacious/tag_ripper/"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
 
