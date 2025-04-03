@@ -32,7 +32,7 @@ module TagRipper
     end
 
     def fqn
-      if @type == :instance_method
+      if type == :instance_method
         fqn_names[0..-2].join("::") + "##{name}"
       else
         fqn_names.join("::")
@@ -169,9 +169,10 @@ module TagRipper
 
     def on_new_taggable_context_kw(lex)
       returnable_entity = named? ? build_child : self
+
       returnable_entity.await_name!
-      puts "Lex #{lex.on_kw_type}"
       self.type = lex.on_kw_type
+
       returnable_entity
     end
 

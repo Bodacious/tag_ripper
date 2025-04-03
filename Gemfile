@@ -13,7 +13,8 @@ end
 
 group :test do
   gem "logger", "~> 1.7"
-  gem "minitest", "~> 5.25"
-  gem "mocha", "~> 2.7"
+  gem "minitest", "~> 5.25", require: "minitest/autorun"
+  gem "mocha", "~> 2.7", require: "mocha/minitest"
   gem "mutex_m", "~> 0.3"
+  gem "simplecov", require: "simplecov"
 end

@@ -2,9 +2,10 @@
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "bundler"
-Bundler.setup(:default, :test)
-require "minitest/autorun"
-require "tag_ripper"
-require "mocha/minitest"
+Bundler.require(:default, :test)
+
+##
+# Test helpers etc.
 require "support/assertions"
 require "support/extensions"
+require "support/factories"

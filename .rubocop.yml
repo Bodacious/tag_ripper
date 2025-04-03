@@ -9,7 +9,14 @@ AllCops:
   NewCops: enable
   SuggestExtensions: true
 
+Metrics/AbcSize:
+  Exclude:
+    - test/**/*
+
 Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
   Enabled: false
 
 Style/StringLiterals:
