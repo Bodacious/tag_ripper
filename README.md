@@ -17,10 +17,22 @@ class User
 end
 
 TagRipper.new(File.read('user.rb')).taggables
-# => [
-# <id=22040, @name=some_method_that_isnt_tested, tags={"warning" => #<Set: {"untested"}>},parent=#<TagRipper::TaggableEntity:0x00000001203bf468>>,
-#  <id=22224, @name=User, tags={"domain" => #<Set: {"Auth"}>},parent=>nil
-# ]
+# (Beautified output)
+# ---
+# - 
+#   id: 2221
+#   name: some_method_that_isnt_tested
+#   tags:
+#     warning:
+#       - "untested
+#   parent: 22224,
+# - 
+#   id: 22224
+#   name: User
+#   tags:
+#     domain: 
+#       - "Auth"
+#    parent: nil
 ```
 
 ## Installation
