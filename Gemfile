@@ -5,6 +5,7 @@ gemspec
 
 group :development, :ci do
   gem "rake", "~> 13.2"
+  gem "rdoc", "~> 6.13"
 
   gem "rubocop", "~> 1.75"
   gem "rubocop-minitest", "~> 0.37"
@@ -16,5 +17,4 @@ group :test do
   gem "minitest", "~> 5.25", require: "minitest/autorun"
   gem "mocha", "~> 2.7", require: "mocha/minitest"
   gem "mutex_m", "~> 0.3"
-  gem "simplecov", require: "simplecov"
 end

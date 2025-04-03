@@ -5,7 +5,7 @@ require_relative "lib/tag_ripper/version"
 
 Gem::Specification.new do |spec|
   spec.name = "tag_ripper"
-  spec.version = Tag::Ripper::VERSION
+  spec.version = TagRipper::VERSION
   spec.authors = ["Gavin Morrice"]
   spec.email = ["gavin@gavinmorrice.com"]
 
