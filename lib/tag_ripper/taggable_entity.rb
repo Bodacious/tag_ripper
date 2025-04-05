@@ -9,22 +9,43 @@ module TagRipper
   # entity is spawned. This creates a sort of recursion that allows a taggable
   # entity to be flexible to any amount of code nesting.
   class TaggableEntity
+    # Unable to move transition from one state to another
     class IllegalStateTransitionError < StandardError
       def initialize(from:, to:)
         super("Cannot transition from #{from} to #{to}")
       end
     end
 
+    # Attempting to set status to an unknown value
+    class InvalidStatusError < ArgumentError; end
+
+    # The valid statuses that a TaggableEntity can move through.
+    # @return [Array<Symbol>]
+    VALID_STATUSES = %i[
+      pending
+      tagged
+      awaiting_name
+      named
+      closed
+    ].freeze
+
+    # Statuses that represent an open lexical scope.
+    # @return [Array<Symbol>]
+    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
+
+
+    #
     def initialize(name: nil, parent: nil)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
       @parent = parent
       @type = nil
-      @status = :pending
+      self.status = :pending
     end
 
+    alias id object_id
+
     def send_event(event_name, lex)
-      puts "send_event: #{event_name} - #{lex} #(#{@status})"
       if respond_to?(event_name, true)
         send(event_name, lex)
       else
@@ -39,6 +60,9 @@ module TagRipper
     def type
       @type
     end
+
+    # The fully-qualified name of this entity (e.g. +"Foo::Bar::MyClass"+)
+    # @return [String]
     def fqn
       return nil unless named?
       return name if fqn_names.size == 1
@@ -51,14 +75,10 @@ module TagRipper
     end
     alias fully_qualified_name fqn
 
-    def pending? = @status == :pending
-
-    def tagged? = @status == :tagged
-
-    def awaiting_name? = @status == :awaiting_name
-
-    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
-
+    # Have we opened a new lexical scope? (e.g. evaluating within the body
+    # of a class, rather than comments before the class)
+    #
+    # @return [Boolean]
     def open?
       OPENED_STATUSES.include?(@status)
     end
@@ -68,7 +88,7 @@ module TagRipper
         raise IllegalStateTransitionError.new(from: @status, to: :tagged)
       end
 
-      @status = :tagged
+      self.status = :tagged
 
       add_tag(tag_name, tag_value)
     end
@@ -78,7 +98,7 @@ module TagRipper
         raise IllegalStateTransitionError.new(from: @status, to: :awaiting_name)
       end
 
-      @status = :awaiting_name
+      self.status = :awaiting_name
     end
 
     def name=(name)
@@ -87,17 +107,19 @@ module TagRipper
       end
 
       @name = name.to_s
-      @status = :named
+      self.status = :named
     end
 
     def close!
       @open = false
-      @status = :closed
+      self.status = :closed
       freeze
     end
 
-    def closed?
-      @status == :closed
+    VALID_STATUSES.each do |status|
+      define_method(:"#{status}?") do
+        @status == status
+      end
     end
 
     def may_tag?
@@ -128,13 +150,19 @@ module TagRipper
       @name.to_s.dup
     end
 
+    protected
+
+
+    def status=(status)
+      status = status.to_sym
+      raise InvalidStatusError unless VALID_STATUSES.include?(status)
+
+      @status = status
+    end
+
     def type=(type)
       @type = type.to_sym
     end
-
-    protected
-
-    alias id object_id
 
     def fqn_names
       return [name] if parent.nil?
@@ -210,5 +238,6 @@ module TagRipper
       close!
       parent
     end
+
   end
 end
