@@ -50,6 +50,16 @@ class TagRipperTest < Minitest::Test
     assert_includes taggable.tags["domain"], "FooDomain"
   end
 
+  def test_detects_tag_comment_on_class_with_namespace_nesting
+    code_string = File.read("./test/fixtures/namespace_nested_example.rb")
+    tag_ripper = TagRipper::Ripper.new(code_string)
+
+    taggable = tag_ripper.taggables.find { |t| t.name == "Foo::Bar" }
+
+    assert_equal "Foo::Bar", taggable.name
+    assert_includes taggable.tags["domain"], "FooDomain"
+  end
+
   def test_detects_modules_with_multiple_tags
     code_string = File.read("./test/fixtures/complex_example.rb")
     tag_ripper = TagRipper::Ripper.new(code_string)

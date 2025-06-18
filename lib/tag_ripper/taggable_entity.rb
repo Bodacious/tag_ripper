@@ -19,6 +19,7 @@ module TagRipper
     # Attempting to set status to an unknown value
     class InvalidStatusError < ArgumentError; end
 
+    # TODO: define naming state, to represent a partial name token
     # The valid statuses that a TaggableEntity can move through.
     # @return [Array<Symbol>]
     VALID_STATUSES = %i[
@@ -150,7 +151,17 @@ module TagRipper
       @name.to_s.dup
     end
 
+    def parent
+      @parent
+    end
+
     protected
+
+    def append_name!(string)
+      raise StandardError, "Cannot append #{string} to nil" unless @name
+
+      @name.concat(string.to_s)
+    end
 
 
     def status=(status)
@@ -168,10 +179,6 @@ module TagRipper
       return [name] if parent.nil?
 
       [*parent.fqn_names, name]
-    end
-
-    def parent
-      @parent
     end
 
     def add_tag(name, value)
@@ -206,6 +213,8 @@ module TagRipper
       send(event_token_method_name, lex)
     end
 
+    ##
+    # Lex is a keyword (e.g. def, class, module)
     def on_new_taggable_context_kw(lex)
       returnable_entity = named? ? build_child : self
 
@@ -224,20 +233,38 @@ module TagRipper
 
     def name_from_lex(lex)
       return self if IGNORED_IDENT_KEYWORDS.include?(lex.token)
-      return self if named?
-      return self unless may_name?
+      # TODO: Simplify this logic
+      return self if named? && !@name.end_with?('::')
+      return self unless may_name? || @name.end_with?('::')
 
-      self.name = lex.token
+      # self.status = :awaiting_name # TODO: Fix this with a proper state
+      if named? && @name.end_with?('::')
+        append_name!(lex.token)
+      else
+        self.name = "#{name}#{lex.token}"
+      end
+
       self
     end
 
+    ##
+    # Matches names of constants: module names, const names, etc.
     alias on_const name_from_lex
+
+    ##
+    # Matches tokens like: private, method names, argument names
     alias on_ident name_from_lex
+
+    def on_op(lex)
+      if lex.double_colon?
+        append_name!(lex.token)
+      end
+      self
+    end
 
     def on_kw_end(_lex)
       close!
       parent
     end
-
   end
 end

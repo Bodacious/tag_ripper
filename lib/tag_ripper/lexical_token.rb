@@ -49,6 +49,10 @@ module TagRipper
       comment? && token.match?(TAG_REGEX)
     end
 
+    def double_colon?
+      token == '::'
+    end
+
     def keyword?
       type == :on_kw
     end
