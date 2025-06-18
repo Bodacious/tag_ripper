@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tag_ripper (0.1.0)
+    tag_ripper (0.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -73,6 +73,9 @@ DEPENDENCIES
   rubocop-minitest (~> 0.37)
   rubocop-rake (~> 0.7)
   tag_ripper!
+
+RUBY VERSION
+   ruby 3.4.3p32
 
 BUNDLED WITH
    2.6.3
