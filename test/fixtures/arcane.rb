@@ -14,18 +14,18 @@ end
 module RefinementExample
   refine String do
     def shoutify
-      upcase + "!!!"
+      "#{upcase}!!!"
     end
   end
 end
 
 class Metamagic
-  prepend Module.new {
+  prepend(Module.new do
     def initialize(*)
       super
       puts "[PREPENDED] #{self.class} instance created"
     end
-  }
+  end)
 
   def initialize(data = [])
     @data = data.lazy.map { |x| x * 2 }
@@ -66,14 +66,13 @@ end
 # This module is defined after the main module is closed
 # @name: outlier
 module Outlier
-
 end
 # Singleton class hackery
 obj = Metamagic.new([{ foo: 42 }, { bar: 99 }])
 
 # @test: pilot
 class << obj
-  define_method(:singleton_magic) { 'I live only here' }
+  define_method(:singleton_magic) { "I live only here" }
 end
 
 # Trace example

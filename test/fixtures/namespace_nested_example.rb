@@ -5,13 +5,15 @@ require "some_file"
 ##
 # Foo module
 #
-module Foo;end
+module Foo; end
 
 ##
 # Bar class
 # @domain: FooDomain
-class Foo::Bar
-  def method_a; end
+module Foo
+  class Bar
+    def method_a; end
 
-  def method_b; end
+    def method_b; end
+  end
 end

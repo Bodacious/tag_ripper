@@ -34,8 +34,6 @@ module TagRipper
     # @return [Array<Symbol>]
     OPENED_STATUSES = %i[tagged awaiting_name named].freeze
 
-
-    #
     def initialize(name: nil, parent: nil)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
@@ -163,7 +161,6 @@ module TagRipper
       @name.concat(string.to_s)
     end
 
-
     def status=(status)
       status = status.to_sym
       raise InvalidStatusError unless VALID_STATUSES.include?(status)
@@ -228,17 +225,19 @@ module TagRipper
     alias on_kw_module on_new_taggable_context_kw
     alias on_kw_class on_new_taggable_context_kw
 
-    IGNORED_IDENT_KEYWORDS = %w[require private class_eval instance_eval define_method].freeze
+    IGNORED_IDENT_KEYWORDS = %w[require private class_eval instance_eval
+                                define_method].freeze
     private_constant :IGNORED_IDENT_KEYWORDS
 
+    # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
     def name_from_lex(lex)
       return self if IGNORED_IDENT_KEYWORDS.include?(lex.token)
       # TODO: Simplify this logic
-      return self if named? && !@name.end_with?('::')
-      return self unless may_name? || @name.end_with?('::')
+      return self if named? && !@name.end_with?("::")
+      return self unless may_name? || @name.end_with?("::")
 
       # self.status = :awaiting_name # TODO: Fix this with a proper state
-      if named? && @name.end_with?('::')
+      if named? && @name.end_with?("::")
         append_name!(lex.token)
       else
         self.name = "#{name}#{lex.token}"
@@ -246,6 +245,7 @@ module TagRipper
 
       self
     end
+    # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
     ##
     # Matches names of constants: module names, const names, etc.
