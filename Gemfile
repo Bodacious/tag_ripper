@@ -3,6 +3,8 @@
 source "https://rubygems.org"
 gemspec
 
+ruby file: "./.ruby-version"
+
 group :development, :ci do
   gem "rake", "~> 13.2"
   gem "rdoc", "~> 6.13"
