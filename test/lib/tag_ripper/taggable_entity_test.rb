@@ -215,7 +215,7 @@ module TagRipper
     end
 
     def test_fully_qualified_name_returns_the_names_of_the_parents_too
-      skip "Find out why this has stopped working"
+      skip 'Find out why this has stopped working'
 
       a = described_class.new
       a.expects(:name).returns("Foo")
@@ -231,7 +231,7 @@ module TagRipper
     end
 
     def test_fully_qualified_name_when_last_item_is_an_instance_method
-      skip "Find out why this has stopped working"
+      skip 'Find out why this has stopped working'
 
       a = described_class.new
       a.expects(:name).returns("Foo")

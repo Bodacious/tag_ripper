@@ -50,7 +50,7 @@ module TagRipper
     end
 
     def double_colon?
-      token == "::"
+      token == '::'
     end
 
     def keyword?
