@@ -8,7 +8,9 @@ AllCops:
   TargetRubyVersion: 3.1
   NewCops: enable
   SuggestExtensions: true
-
+  Exclude:
+    - bin/*
+    - test/fixtures/**/*  # These files have particular styles that should be preserved
 Metrics/AbcSize:
   Exclude:
     - test/**/*
@@ -30,4 +32,3 @@ Style/TrivialAccessors:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
-
