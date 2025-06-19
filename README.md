@@ -5,7 +5,24 @@
 
 Lets you annotate Ruby code with tags that can be parsed and collected in code.
 
-Example:
+
+## Installation
+
+
+Install the gem and add to the application's Gemfile by executing:
+
+```bash
+bundle add tag_ripper
+```
+
+If bundler is not being used to manage dependencies, install the gem by executing:
+
+```bash
+gem install tag_ripper
+```
+
+## Usage
+
 
 ```ruby
 # @domain: Auth
@@ -34,25 +51,6 @@ TagRipper.new(File.read('user.rb')).taggables
 #       - "Auth"
 #    parent: nil
 ```
-
-## Installation
-
-
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add tag_ripper
-```
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-```bash
-gem install tag_ripper
-```
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 
