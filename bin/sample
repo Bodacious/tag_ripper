@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'tag_ripper'
+require 'pathname'
+
+file_names = ARGV.any? ? ARGV : Dir['samples/*.rb'].map { |p|p.split('/').last }
+if file_names.empty?
+  puts "No samples to run..."
+  exit(0)
+end
+
+file_names.each do |file_name|
+  file_path = Pathname.new("samples/#{file_name}")
+  TagRipper::Ripper.new(File.read(file_path)).taggable_modules.each do |taggable|
+    puts taggable.inspect
+  end
+end
