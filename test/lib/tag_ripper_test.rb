@@ -126,4 +126,32 @@ class TagRipperTest < Minitest::Test
     assert_equal :class, taggable.type
     assert_includes taggable.tags["meta_name"], "singleton"
   end
+
+  def test_handles_class_names_with_semicolons_referenced_in_the_body
+    tag_ripper = TagRipper::Ripper.new(<<~RUBY)
+      module A
+        class Foo < Bar
+          class << self
+            def singleton_method # this was throwing off the rest of the tagging and naming
+              # noop
+            end
+          end
+          def method_a
+            begin
+              x = 1
+            rescue A::BError,
+              "This error class should not interfere with the taggable name"
+              x = 2
+            end
+          end
+        end
+      end
+    RUBY
+
+    taggable_modules = tag_ripper.taggable_modules
+
+    assert_includes taggable_modules.map(&:name), "A"
+    assert_includes taggable_modules.map(&:name), "Foo"
+    assert_includes taggable_modules.map(&:name), "self"
+  end
 end
