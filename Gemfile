@@ -12,6 +12,12 @@ group :development, :ci do
   gem "rubocop-rake", "~> 0.7"
 end
 
+group :development, :test do
+  gem "guard"
+  gem "guard-minitest"
+  gem "guard-rubocop"
+end
+
 group :test do
   gem "logger", "~> 1.7"
   gem "minitest", "~> 5.25", require: "minitest/autorun"
