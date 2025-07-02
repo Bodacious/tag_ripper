@@ -5,6 +5,19 @@ require "test_helper"
 module TagRipper
   class TaggableEntityTest < Minitest::Test
     using Assertions
+    def test_module_returns_true_if_type_is_module
+      subject = described_class.new(type: :module)
+
+      assert_predicate subject, :module?
+    end
+
+    # Class inherits from Module
+    def test_module_returns_true_if_type_is_class
+      subject = described_class.new(type: :class)
+
+      assert_predicate subject, :module?
+    end
+
     def test_freezes_on_end_kw
       subject = described_class.new
 
@@ -230,6 +243,12 @@ module TagRipper
       assert_equal "Foo::Bar::C", c.fully_qualified_name
     end
 
+    def test_inspect_includes_the_type
+      subject = described_class.new(type: :class)
+
+      assert_includes subject.inspect, "class"
+    end
+
     def test_fully_qualified_name_when_last_item_is_an_instance_method
       skip "Find out why this has stopped working"
 
@@ -244,6 +263,18 @@ module TagRipper
       c.expects(:type).returns(:instance_method)
 
       assert_equal "Foo::Bar#method_c", c.fully_qualified_name
+    end
+
+    def test_name_predicate_returns_true_if_name_is_set
+      subject = described_class.new(name: "name")
+
+      assert_predicate subject, :name?
+    end
+
+    def test_name_predicate_returns_false_if_name_is_nil
+      subject = described_class.new
+
+      refute_predicate subject, :name?
     end
   end
 end

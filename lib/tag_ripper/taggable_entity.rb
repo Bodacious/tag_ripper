@@ -34,22 +34,30 @@ module TagRipper
     # @return [Array<Symbol>]
     OPENED_STATUSES = %i[tagged awaiting_name named].freeze
 
-    def initialize(name: nil, parent: nil)
+    def initialize(name: nil, parent: nil, type: nil)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
       @parent = parent
-      @type = nil
+      @type = type
       self.status = :pending
     end
 
     alias id object_id
 
     def send_event(event_name, lex)
+      debug_event(event_name, lex) if ENV["DEBUG_TAG_RIPPER"]
       if respond_to?(event_name, true)
         send(event_name, lex)
       else
         self
       end
+    end
+
+    def debug_event(event_name, lex)
+      puts <<~OUTPUT.chomp
+        Sending #{event_name} to #{self} with #{lex.token.inspect}
+        #{inspect}"
+      OUTPUT
     end
 
     def module?
@@ -63,7 +71,7 @@ module TagRipper
     # The fully-qualified name of this entity (e.g. +"Foo::Bar::MyClass"+)
     # @return [String]
     def fqn
-      return nil unless named?
+      return nil unless name?
       return name if fqn_names.size == 1
 
       if type == :instance_method
@@ -98,6 +106,10 @@ module TagRipper
       end
 
       self.status = :awaiting_name
+    end
+
+    def name?
+      !!@name
     end
 
     def name=(name)
@@ -138,7 +150,11 @@ module TagRipper
     end
 
     def inspect
-      "<id=#{id},@name=#{@name},tags=#{@tags},parent=#{@parent}>"
+      exposed_properties = %i[name fqn type parent status tags]
+      inner_string = exposed_properties.map do |property|
+        "#{property}=#{public_send(property)}"
+      end.join(", ")
+      inner_string.to_s
     end
 
     def tags
@@ -151,6 +167,10 @@ module TagRipper
 
     def parent
       @parent
+    end
+
+    def status
+      @status
     end
 
     protected
@@ -180,10 +200,6 @@ module TagRipper
 
     def add_tag(name, value)
       @tags[name].add(value)
-    end
-
-    def name?
-      !!@name
     end
 
     def build_child
@@ -216,7 +232,7 @@ module TagRipper
       returnable_entity = named? ? build_child : self
 
       returnable_entity.await_name!
-      self.type = lex.on_kw_type
+      returnable_entity.type = lex.on_kw_type
 
       returnable_entity
     end
@@ -233,10 +249,10 @@ module TagRipper
       return self if IGNORED_IDENT_KEYWORDS.include?(lex.token)
       # TODO: Simplify this logic
       return self if named? && !@name.end_with?("::")
-      return self unless may_name? || @name.end_with?("::")
+      return self unless may_name? || (name? && @name.end_with?("::"))
 
       # self.status = :awaiting_name # TODO: Fix this with a proper state
-      if named? && @name.end_with?("::")
+      if named? && @name.to_s.end_with?("::")
         append_name!(lex.token)
       else
         self.name = "#{name}#{lex.token}"
@@ -257,6 +273,24 @@ module TagRipper
       if lex.double_colon?
         append_name!(lex.token)
       end
+
+      # return name_from_op(lex) if lex.singleton_class?
+      self
+    end
+
+    def on_kw_self(lex)
+      if module? && awaiting_name?
+        self.name = lex.token
+        return self
+      end
+
+      self
+    end
+
+    ##
+    # Name the current entity 'self' based on an operator (e.g. +class << self+)
+    def name_from_kw(lex)
+      self.name = lex.token
       self
     end
 
