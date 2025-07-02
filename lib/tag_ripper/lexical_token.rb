@@ -15,6 +15,7 @@ module TagRipper
     # = Keywords =
 
     KEYWORD_CONST = "const".freeze
+    KEYWORD_CLASS = "class".freeze
     KEYWORD_DEF = "def".freeze
     KEYWORD_END = "end".freeze
     KEYWORD_MODULE = "module".freeze
@@ -93,13 +94,10 @@ module TagRipper
     def on_kw_type
       return nil unless keyword?
 
-      case token
-      when KEYWORD_CONST then :class
-      when KEYWORD_MODULE then :module
-      when KEYWORD_DEF then :instance_method
-      else
-        :unknown
-      end
+      const_lookup = "KEYWORD_#{token.upcase}"
+      return :unknown unless self.class.const_defined?(const_lookup)
+
+      self.class.const_get(const_lookup).to_sym
     end
   end
 end
