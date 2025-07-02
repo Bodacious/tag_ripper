@@ -30,6 +30,27 @@ class TagRipperTest < Minitest::Test
     assert_empty tag_ripper.taggables
   end
 
+  def test_returns_a_list_of_taggable_modules
+    tag_ripper = TagRipper::Ripper.new(Tempfile.new)
+
+    assert_empty tag_ripper.taggable_modules
+  end
+
+  def test_returns_a_list_of_taggable_modules_detected_in_code
+    tag_ripper = TagRipper::Ripper.new(<<~RUBY)
+      class FooClass
+      end
+      module BarModule
+      end
+    RUBY
+
+    taggable_modules = tag_ripper.taggable_modules
+
+    assert_equal 2, taggable_modules.length
+    assert_includes taggable_modules.map(&:name), "BarModule"
+    assert_includes taggable_modules.map(&:name), "FooClass"
+  end
+
   def test_detects_tag_comment_on_module
     code_string = File.read("./test/fixtures/simple_example.rb")
     tag_ripper = TagRipper::Ripper.new(code_string)
