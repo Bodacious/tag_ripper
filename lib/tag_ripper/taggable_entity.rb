@@ -182,7 +182,7 @@ module TagRipper
       @tags[name].add(value)
     end
 
-    def named?
+    def name?
       !!@name
     end
 
