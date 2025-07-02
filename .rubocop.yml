@@ -11,6 +11,7 @@ AllCops:
   Exclude:
     - bin/*
     - test/fixtures/**/*  # These files have particular styles that should be preserved
+    - samples/**/*  # These files have particular styles that should be preserved
 Metrics/AbcSize:
   Exclude:
     - test/**/*
