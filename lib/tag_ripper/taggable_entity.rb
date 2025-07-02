@@ -108,6 +108,10 @@ module TagRipper
       self.status = :awaiting_name
     end
 
+    def name?
+      !!@name
+    end
+
     def name=(name)
       unless may_name?
         raise IllegalStateTransitionError.new(from: @status, to: :named)
@@ -196,10 +200,6 @@ module TagRipper
 
     def add_tag(name, value)
       @tags[name].add(value)
-    end
-
-    def name?
-      !!@name
     end
 
     def build_child
