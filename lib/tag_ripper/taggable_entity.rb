@@ -149,13 +149,19 @@ module TagRipper
       named?
     end
 
+    def parent_id
+      parent&.id
+    end
+
     def inspect
-      exposed_properties = %i[name fqn type parent status tags]
+      exposed_properties = %i[object_id name fqn type parent_id status tags]
       inner_string = exposed_properties.map do |property|
         "#{property}=#{public_send(property)}"
       end.join(", ")
-      inner_string.to_s
+      "<#{inner_string}>"
     end
+
+    alias to_s inspect
 
     def tags
       @tags.dup
