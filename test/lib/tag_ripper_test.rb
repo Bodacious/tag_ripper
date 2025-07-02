@@ -79,4 +79,14 @@ class TagRipperTest < Minitest::Test
 
     assert_includes taggable.tags["domain"], "Method"
   end
+
+  def test_detects_tags_on_singleton_class_example
+    code_string = File.read("./test/fixtures/singleton_class.rb")
+    tag_ripper = TagRipper::Ripper.new(code_string)
+
+    taggable = tag_ripper.taggables.find { |t| t.name == "self" }
+
+    assert_equal :class, taggable.type
+    assert_includes taggable.tags["meta_name"], "singleton"
+  end
 end

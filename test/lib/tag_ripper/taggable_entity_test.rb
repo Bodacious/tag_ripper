@@ -245,5 +245,15 @@ module TagRipper
 
       assert_equal "Foo::Bar#method_c", c.fully_qualified_name
     end
+
+    def test_name_predicate_returns_true_if_name_is_set
+      subject = described_class.new(name: "name")
+      assert_predicate subject, :name?
+    end
+
+    def test_name_predicate_returns_false_if_name_is_nil
+      subject = described_class.new
+      refute_predicate subject, :name?
+    end
   end
 end

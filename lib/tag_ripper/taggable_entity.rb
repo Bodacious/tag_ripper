@@ -236,7 +236,7 @@ module TagRipper
       return self unless may_name? || @name.end_with?("::")
 
       # self.status = :awaiting_name # TODO: Fix this with a proper state
-      if named? && @name.end_with?("::")
+      if named? && @name.to_s.end_with?("::")
         append_name!(lex.token)
       else
         self.name = "#{name}#{lex.token}"
@@ -256,6 +256,13 @@ module TagRipper
     def on_op(lex)
       if lex.double_colon?
         append_name!(lex.token)
+      end
+      # TODO: Revisit this?
+      # For now, fully-qualified names for singleton classes will be shown as
+      # Foo::Bar::(singleton_class)#method_name
+      # I think that's fine?
+      if lex.singleton_class?
+        self.name = "(singleton_class)"
       end
       self
     end
