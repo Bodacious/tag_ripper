@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'tag_ripper'
+require_relative '../lib/tag_ripper'
 require 'pathname'
 
 file_names = ARGV.any? ? ARGV : Dir['samples/*.rb'].map { |p|p.split('/').last }
