@@ -3,8 +3,21 @@ module TagRipper
     require "forwardable"
     extend Forwardable
 
-    TAG_REGEX = /#\s@(?<tag_name>[\w_-]+):\s(?<tag_value>.+)/
-    END_TOKEN = "end".freeze
+    TAG_REGEX = /#\s@(?<tag_name>[\w-]+):\s(?<tag_value>.+)/
+
+    ##
+    # = Operators =
+
+    DOUBLE_COLON = "::".freeze
+    SINGLETON_CLASS = "<<".freeze
+
+    ##
+    # = Keywords =
+
+    KEYWORD_CONST = "const".freeze
+    KEYWORD_DEF = "def".freeze
+    KEYWORD_END = "end".freeze
+    KEYWORD_MODULE = "module".freeze
 
     class Location
       attr_reader :col
@@ -50,7 +63,11 @@ module TagRipper
     end
 
     def double_colon?
-      token == "::"
+      token == DOUBLE_COLON
+    end
+
+    def singleton_class?
+      token == SINGLETON_CLASS
     end
 
     def keyword?
@@ -58,7 +75,7 @@ module TagRipper
     end
 
     def end?
-      keyword? && token == END_TOKEN
+      keyword? && token == KEYWORD_END
     end
 
     def tag_name
@@ -77,9 +94,9 @@ module TagRipper
       return nil unless keyword?
 
       case token
-      when "const" then :class
-      when "module" then :module
-      when "def" then :instance_method
+      when KEYWORD_CONST then :class
+      when KEYWORD_MODULE then :module
+      when KEYWORD_DEF then :instance_method
       else
         :unknown
       end
