@@ -170,10 +170,6 @@ module TagRipper
       awaiting_name? | naming?
     end
 
-    def may_close?
-      named?
-    end
-
     def parent_id
       parent&.id
     end
