@@ -276,6 +276,11 @@ module TagRipper
       self
     end
 
+    ##
+    # = These are all tokens that may follow a name component, but do not
+    # = define the name =
+    # @see on_non_name_token
+
     alias on_nl on_non_name_token
     alias on_sp on_non_name_token
     alias on_semicolon on_non_name_token
