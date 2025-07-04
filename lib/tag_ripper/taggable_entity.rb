@@ -45,19 +45,21 @@ module TagRipper
     alias id object_id
 
     def send_event(event_name, lex)
-      debug_event(event_name, lex) if ENV["DEBUG_TAG_RIPPER"]
-      if respond_to?(event_name, true)
-        send(event_name, lex)
-      else
-        self
-      end
+      debug(<<~DEBUG) unless lex.token.strip != ""
+        Sending #{event_name} to #{self} with #{lex.token.inspect}
+        #{inspect}
+
+      DEBUG
+
+      return self unless respond_to?(event_name, true)
+
+      send(event_name, lex)
     end
 
-    def debug_event(event_name, lex)
-      puts <<~OUTPUT.chomp
-        Sending #{event_name} to #{self} with #{lex.token.inspect}
-        #{inspect}"
-      OUTPUT
+    def debug(*strings)
+      return if ENV.fetch("TAG_RIPPER_DEBUG", "false") == "false"
+
+      puts strings.join(" - ")
     end
 
     def module?
