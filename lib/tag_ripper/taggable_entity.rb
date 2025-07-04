@@ -37,12 +37,12 @@ module TagRipper
     # @return [Array<Symbol>]
     OPENED_STATUSES = %i[tagged awaiting_name named].freeze
 
-    def initialize(name: nil, parent: nil, type: nil)
+    def initialize(name: nil, parent: nil, type: nil, status: :pending)
       @name = name
       @tags = Hash.new { |hash, key| hash[key] = Set.new }
       @parent = parent
       @type = type
-      self.status = :pending
+      self.status = status
     end
 
     alias id object_id
