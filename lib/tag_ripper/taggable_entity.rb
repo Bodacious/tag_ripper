@@ -37,6 +37,37 @@ module TagRipper
       closed
     ].freeze
 
+    ##
+    # = NOTE: This isn't doing much yet, as the methods are not being used
+    state_machine do
+      state :pending
+      state :tagged
+      state :awaiting_name
+      state :naming
+      state :named
+      state :closed
+
+      event :tag do
+        transitions from: :pending, to: :tagged
+      end
+
+      event :await_name do
+        transitions from: :tagged, to: :awaiting_name
+      end
+
+      event :begin_naming do
+        transitions from: :awaiting_name, to: :begin_naming
+      end
+
+      event :end_naming do
+        transitions from: :begin_naming, to: :named
+      end
+
+      event :close do
+        transitions from: :named, to: :closed
+      end
+    end
+
     # Statuses that represent an open lexical scope.
     # @return [Array<Symbol>]
     OPENED_STATUSES = %i[tagged awaiting_name named].freeze
