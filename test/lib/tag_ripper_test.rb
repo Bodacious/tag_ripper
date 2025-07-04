@@ -109,8 +109,33 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_detects_tags_on_public_methods
-    code_string = File.read("./test/fixtures/complex_example.rb")
-    tag_ripper = TagRipper::Ripper.new(code_string)
+    tag_ripper = TagRipper::Ripper.new(<<~RUBY)
+      require "some_file"
+
+      # Foo module
+      # @domain: Fizz
+      # @domain: Buzz
+      module Foo
+        # Bar class
+        # @domain: FooDomain
+        class Bar
+          # @domain: Method
+          def method_a(foo)
+            case foo
+            when :fizz then "buzz"
+            else
+              "bar"
+            end
+          end
+
+          private
+
+          # This is a private method
+          # @domain: PrivMethod
+          def method_b; end
+        end
+      end
+    RUBY
 
     taggable = tag_ripper.taggables.find { |t| t.name == "method_a" }
 

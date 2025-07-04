@@ -28,6 +28,7 @@ module TagRipper
       pending
       tagged
       awaiting_name
+      naming
       named
       closed
     ].freeze
@@ -47,7 +48,7 @@ module TagRipper
     alias id object_id
 
     def send_event(event_name, lex)
-      debug(<<~DEBUG) unless lex.token.strip != ""
+      debug(<<~DEBUG)
         Sending #{event_name} to #{self} with #{lex.token.inspect}
         #{inspect}
 
@@ -116,12 +117,12 @@ module TagRipper
       !!@name
     end
 
-    def name=(name)
-      unless may_name?
+    def name=(value)
+      unless may_append_name?
         raise IllegalStateTransitionError.new(from: @status, to: :named)
       end
 
-      @name = name.to_s
+      @name = value
       self.status = :named
     end
 
@@ -147,6 +148,10 @@ module TagRipper
 
     def may_name?
       awaiting_name?
+    end
+
+    def may_append_name?
+      awaiting_name? | naming?
     end
 
     def may_close?
@@ -186,8 +191,12 @@ module TagRipper
     protected
 
     def append_name!(string)
-      raise StandardError, "Cannot append #{string} to nil" unless @name
+      unless may_append_name?
+        raise IllegalStateTransitionError.new(from: @status, to: :naming)
+      end
 
+      @status = :naming
+      @name ||= ""
       @name.concat(string.to_s)
     end
 
@@ -255,21 +264,35 @@ module TagRipper
                                 define_method].freeze
     private_constant :IGNORED_IDENT_KEYWORDS
 
-    def name_from_lex(lex) # rubocop:disable Metrics
+    def name_from_lex(lex)
       return self if IGNORED_IDENT_KEYWORDS.include?(lex.token)
-      # TODO: Simplify this logic
-      return self if named? && !@name.end_with?("::")
-      return self unless may_name? || (name? && @name.end_with?("::"))
 
-      # self.status = :awaiting_name # TODO: Fix this with a proper state
-      if named? && @name.to_s.end_with?("::")
-        append_name!(lex.token)
-      else
-        self.name = "#{name}#{lex.token}"
-      end
+      # If we are already done naming, then we don't want to name some more...
+      return self if named?
+
+      # Unless we are awaiting more name information, return self
+      return self unless may_append_name?
+
+      append_name!(lex.token)
 
       self
     end # rubocop:enable Metrics
+
+    # Token is not likely to be part of a TaggableEntity name
+    # (e.g. spaces, newlines, semicolons, keywords...)
+    def on_non_name_token(_lex)
+      if naming?
+        @status = :named
+      end
+      self
+    end
+
+    alias on_nl on_non_name_token
+    alias on_sp on_non_name_token
+    alias on_semicolon on_non_name_token
+    alias on_comma on_non_name_token
+    alias on_lparen on_non_name_token
+    alias on_rparen on_non_name_token
 
     ##
     # Matches names of constants: module names, const names, etc.
@@ -280,7 +303,7 @@ module TagRipper
     alias on_ident name_from_lex
 
     def on_op(lex)
-      if lex.double_colon?
+      if lex.double_colon? && may_append_name?
         append_name!(lex.token)
       end
 
