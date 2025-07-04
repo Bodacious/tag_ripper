@@ -52,8 +52,20 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_detects_tag_comment_on_module
-    code_string = File.read("./test/fixtures/simple_example.rb")
-    tag_ripper = TagRipper::Ripper.new(code_string)
+    tag_ripper = TagRipper::Ripper.new(<<~RUBY)
+      # frozen_string_literal: true
+
+      require "some_file"
+
+      # Foo module
+      #
+      # @domain: FooDomain
+      module Foo
+        def method_b
+          # noop
+        end
+      end
+    RUBY
 
     taggable = tag_ripper.taggables.find { |t| t.name == "Foo" }
 
@@ -62,8 +74,23 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_detects_tag_comment_on_class_nested_in_module
-    code_string = File.read("./test/fixtures/nested_example.rb")
-    tag_ripper = TagRipper::Ripper.new(code_string)
+    tag_ripper = TagRipper::Ripper.new(<<~RUBY)
+      # frozen_string_literal: true
+
+      require "some_file"
+
+      # Foo module
+      #
+      module Foo
+        # Bar class
+        # @domain: FooDomain
+        class Bar
+          def method_a; end
+
+          def method_b; end
+        end
+      end
+    RUBY
 
     taggable = tag_ripper.taggables.find { |t| t.name == "Bar" }
 
@@ -88,7 +115,26 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_detects_tag_comment_on_class_with_namespace_nesting
-    code_string = File.read("./test/fixtures/namespace_nested_example.rb")
+    code_string = <<~RUBY
+      # frozen_string_literal: true
+
+      require "some_file"
+
+      ##
+      # Foo module
+      #
+      module Foo;end
+
+      ##
+      # Bar class
+      # @domain: FooDomain
+      class Foo::Bar
+        def method_a; end
+
+        def method_b; end
+      end
+    RUBY
+
     tag_ripper = TagRipper::Ripper.new(code_string)
 
     taggable = tag_ripper.taggables.find { |t| t.name == "Foo::Bar" }
@@ -98,7 +144,36 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_detects_modules_with_multiple_tags
-    code_string = File.read("./test/fixtures/complex_example.rb")
+    code_string = <<~RUBY
+      # frozen_string_literal: true
+
+      require "some_file"
+
+      # Foo module
+      # @domain: Fizz
+      # @domain: Buzz
+      module Foo
+        # Bar class
+        # @domain: FooDomain
+        class Bar
+          # @domain: Method
+          def method_a(foo)
+            case foo
+            when :fizz then "buzz"
+            else
+              "bar"
+            end
+          end
+
+          private
+
+          # This is a private method
+          # @domain: PrivMethod
+          def method_b; end
+        end
+      end
+    RUBY
+
     tag_ripper = TagRipper::Ripper.new(code_string)
 
     taggable = tag_ripper.taggables.find { |t| t.name == "Foo" }
@@ -143,7 +218,30 @@ class TagRipperTest < Minitest::Test
   end
 
   def test_detects_tags_on_singleton_class_example
-    code_string = File.read("./test/fixtures/singleton_class.rb")
+    code_string = <<~RUBY
+      # frozen_string_literal: true
+
+      require "some_file"
+
+      # Foo module
+      #
+      # @domain: FooDomain
+      module Foo
+        # @meta_name: singleton
+        class << self
+          # @foo: bar
+          def method_a
+            # noop
+          end
+        end
+
+        # @fizz: buzz
+        def method_b
+          # noop
+        end
+      end
+    RUBY
+
     tag_ripper = TagRipper::Ripper.new(code_string)
 
     taggable = tag_ripper.taggables.find { |t| t.name == "self" }
