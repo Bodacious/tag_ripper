@@ -166,10 +166,6 @@ module TagRipper
       end
     end
 
-    def may_await_name?
-      pending? | tagged?
-    end
-
     def may_name?
       awaiting_name?
     end
