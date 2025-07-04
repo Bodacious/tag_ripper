@@ -59,6 +59,7 @@ module TagRipper
       end
 
       event :end_naming do
+        transitions from: :awaiting_name, to: :named
         transitions from: :begin_naming, to: :named
       end
 
@@ -137,7 +138,7 @@ module TagRipper
       end
 
       @name = value
-      self.status = :named
+      end_naming!
     end
 
     def close!
