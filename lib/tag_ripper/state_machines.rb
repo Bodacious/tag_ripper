@@ -38,9 +38,11 @@ module TagRipper
         state_machine.events.each do |event_name, event|
           define_method(:"may_#{event_name}?") do
             event.defined_transitions.any? do |t|
-              t[:from] == status.to_sym || t[:to] == status.to_sym
+              t[:from] == status.to_sym ||
+                t[:to] == status.to_sym # allow transition to same state
             end
           end
+
           define_method(:"#{event_name}!") do
             transition = event.defined_transitions.find do |t|
               t[:from] == status.to_sym
