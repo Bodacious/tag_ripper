@@ -11,6 +11,10 @@ module TagRipper
   # entity is spawned. This creates a sort of recursion that allows a taggable
   # entity to be flexible to any amount of code nesting.
   class TaggableEntity
+    require_relative "state_machines"
+
+    include StateMachines
+
     # Unable to move transition from one state to another
     class IllegalStateTransitionError < StandardError
       def initialize(from:, to:)
