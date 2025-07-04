@@ -3,10 +3,3 @@ guard :minitest, cli: "--verbose" do
   watch(%r{^lib/(.+)\.rb$}) { |m| "test/#{m[1]}_test.rb" }
   watch("test/test_helper.rb") { "test" }
 end
-
-guard :rubocop, all_on_start: false do
-  watch(/^.+\.rb$/)
-  watch(%r{^(config|test)/.+\.rb$})
-  watch("Gemfile")
-  watch(".rubocop.yml")
-end
