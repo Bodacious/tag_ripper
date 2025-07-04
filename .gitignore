@@ -10,3 +10,4 @@
 .rubocop-*rubocop-yml
 # use this dir to keep sensitive code files that we want to test on
 ./samples/**/*
+doc
