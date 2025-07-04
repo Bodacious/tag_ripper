@@ -4,6 +4,8 @@ module TagRipper
   # Defines a finite state machine. Opted for this, rather than a third party
   # solution like AASM, so that there aren't any depdendency clashes
   module StateMachines # :nodoc:
+    class IllegalStateTransitionError < StandardError; end
+
     # Prepend the state machine initialization onto the extending class
     module StateMachineInitialization # :nodoc:
       def initialize(...)
@@ -38,7 +40,10 @@ module TagRipper
             transition = event.defined_transitions.find do |t|
               t[:from] == status.to_sym
             end
-            raise "Invalid transition" unless transition
+            unless transition
+              raise IllegalStateTransitionError,
+                    "Invalid transition"
+            end
 
             self.status = transition[:to].to_sym
           end

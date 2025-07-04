@@ -162,9 +162,9 @@ module TagRipper
     end
 
     def test_await_name_raises_an_exception_if_may_not_await_name
-      subject = described_class.new
-      subject.expects(:may_await_name?).returns(false)
-      assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
+      subject = described_class.new status: :named
+      # subject.expects(:may_await_name?).returns(false)
+      assert_raises(TagRipper::StateMachines::IllegalStateTransitionError,
                     "Cannot transition from pending to awaiting_name") do
         subject.await_name!
       end

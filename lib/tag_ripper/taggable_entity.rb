@@ -52,6 +52,7 @@ module TagRipper
       end
 
       event :await_name do
+        transitions from: :pending, to: :awaiting_name
         transitions from: :tagged, to: :awaiting_name
       end
 
@@ -67,10 +68,6 @@ module TagRipper
         transitions from: :named, to: :closed
       end
     end
-
-    # Statuses that represent an open lexical scope.
-    # @return [Array<Symbol>]
-    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
 
     def initialize(name: nil, parent: nil, type: nil, status: :pending)
       @name = name
@@ -122,6 +119,10 @@ module TagRipper
     end
     alias fully_qualified_name fqn
 
+    # Statuses that represent an open lexical scope.
+    # @return [Array<Symbol>]
+    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
+
     # Have we opened a new lexical scope? (e.g. evaluating within the body
     # of a class, rather than comments before the class)
     #
@@ -138,14 +139,6 @@ module TagRipper
       self.status = :tagged
 
       add_tag(tag_name, tag_value)
-    end
-
-    def await_name!
-      unless may_await_name?
-        raise IllegalStateTransitionError.new(from: @status, to: :awaiting_name)
-      end
-
-      self.status = :awaiting_name
     end
 
     def name?
