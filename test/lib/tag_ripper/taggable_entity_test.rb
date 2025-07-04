@@ -74,10 +74,10 @@ module TagRipper
       assert_predicate subject, :may_await_name?
     end
 
-    def test_may_not_name_if_pending
-      subject = described_class.new
+    def test_may_not_append_name_if_pending
+      subject = described_class.new status: :pending
 
-      refute_predicate subject, :may_name?
+      refute_predicate subject, :may_append_name?
     end
 
     def test_may_not_close_if_pending
@@ -93,11 +93,11 @@ module TagRipper
       assert_predicate subject, :may_await_name?
     end
 
-    def test_may_not_name_if_tagged
+    def test_may_not_append_name_if_tagged
       subject = described_class.new
       subject.tag!("foo", "bar")
 
-      refute_predicate subject, :may_name?
+      refute_predicate subject, :may_append_name?
     end
 
     def test_may_not_close_if_tagged
@@ -111,7 +111,7 @@ module TagRipper
       subject = described_class.new
       subject.await_name!
 
-      assert_predicate subject, :may_name?
+      assert_predicate subject, :may_append_name?
     end
 
     def test_may_not_tag_if_awaiting_name

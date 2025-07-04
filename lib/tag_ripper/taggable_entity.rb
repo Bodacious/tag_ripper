@@ -166,10 +166,6 @@ module TagRipper
       end
     end
 
-    def may_name?
-      awaiting_name?
-    end
-
     def may_append_name?
       awaiting_name? | naming?
     end
