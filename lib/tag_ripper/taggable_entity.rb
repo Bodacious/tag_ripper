@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module TagRipper
   # Follows the state changes of a taggable entity (class, model, or method)
   # as it responds to various Lexical tokens.
