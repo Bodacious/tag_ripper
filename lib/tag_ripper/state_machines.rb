@@ -24,6 +24,7 @@ module TagRipper
     end
 
     module ClassMethods # :nodoc:
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
       def state_machine(&)
         return @state_machine unless block_given?
 
@@ -56,6 +57,7 @@ module TagRipper
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
       def state_names
         @state_machine.states
