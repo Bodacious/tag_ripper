@@ -147,12 +147,6 @@ module TagRipper
       freeze
     end
 
-    VALID_STATUSES.each do |status|
-      define_method(:"#{status}?") do
-        @status == status
-      end
-    end
-
     def may_append_name?
       awaiting_name? | naming?
     end
