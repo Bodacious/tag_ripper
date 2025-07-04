@@ -37,8 +37,6 @@ module TagRipper
       closed
     ].freeze
 
-    ##
-    # = NOTE: This isn't doing much yet, as the methods are not being used
     state_machine do
       state :pending
       state :tagged
