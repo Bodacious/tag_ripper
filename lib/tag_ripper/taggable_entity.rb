@@ -117,18 +117,6 @@ module TagRipper
     end
     alias fully_qualified_name fqn
 
-    # Statuses that represent an open lexical scope.
-    # @return [Array<Symbol>]
-    OPENED_STATUSES = %i[tagged awaiting_name named].freeze
-
-    # Have we opened a new lexical scope? (e.g. evaluating within the body
-    # of a class, rather than comments before the class)
-    #
-    # @return [Boolean]
-    def open?
-      OPENED_STATUSES.include?(@status)
-    end
-
     def tag!(tag_name, tag_value)
       unless may_tag?
         raise IllegalStateTransitionError.new(from: @status, to: :tagged)

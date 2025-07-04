@@ -40,22 +40,6 @@ module TagRipper
       assert_includes_subhash subject.tags, { "foo" => ["bar"].to_set }
     end
 
-    def test_opens_on_first_tagged_comment
-      subject = described_class.new
-
-      refute_predicate subject, :open?
-
-      lex = stub("Lex",
-                 event: :on_comment,
-                 token: "# @foo: bar",
-                 tag_comment?: true,
-                 tag_name: "foo",
-                 tag_value: "bar")
-      subject.send_event(lex.event, lex)
-
-      assert_predicate subject, :open?
-    end
-
     def test_it_initializes_as_pending?
       subject = described_class.new
 
