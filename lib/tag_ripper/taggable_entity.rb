@@ -118,12 +118,8 @@ module TagRipper
     end
     alias fully_qualified_name fqn
 
-    def tag!(tag_name, tag_value)
-      unless may_tag?
-        raise IllegalStateTransitionError.new(from: @status, to: :tagged)
-      end
-
-      self.status = :tagged
+    def add_tag!(tag_name, tag_value)
+      tag!
 
       add_tag(tag_name, tag_value)
     end
@@ -225,7 +221,7 @@ module TagRipper
       receiver = named? ? build_child : self
       if TagRipper.config.only_tags.empty? ||
          TagRipper.config.only_tags.include?(lex.tag_name)
-        receiver.tag!(lex.tag_name, lex.tag_value)
+        receiver.add_tag!(lex.tag_name, lex.tag_value)
       end
       receiver
     end

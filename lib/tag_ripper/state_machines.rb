@@ -24,7 +24,7 @@ module TagRipper
     end
 
     module ClassMethods # :nodoc:
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def state_machine(&)
         return @state_machine unless block_given?
 
@@ -48,16 +48,20 @@ module TagRipper
             transition = event.defined_transitions.find do |t|
               t[:from] == status.to_sym
             end
-            unless transition
+            may_transition_via_event = public_send(:"may_#{event_name}?")
+            unless may_transition_via_event
               raise IllegalStateTransitionError,
-                    "Invalid transition"
+                    "Invalid transition: " \
+                    "Cannot transition via #{event_name} from #{status.to_sym}"
             end
+
+            return status if may_transition_via_event & transition.nil?
 
             self.status = transition[:to].to_sym
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       def state_names
         @state_machine.states
