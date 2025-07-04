@@ -277,7 +277,7 @@ module TagRipper
       refute_predicate subject, :name?
     end
 
-    def test_awaiting_name_becomes_naming_until_next_token_not_a_name_component
+    def test_changes_to_awaiting_name_when_class_keyword
       subject = described_class.new
 
       subject.send_event(:on_kw,
@@ -288,30 +288,50 @@ module TagRipper
                                double_colon?: false))
 
       assert_predicate subject, :awaiting_name?
+    end
+
+    def test_awaiting_name_remains_awaiting_name_if_space_keyword
+      subject = described_class.new status: :awaiting_name
 
       subject.send_event(:on_sp,
                          build(:lex, event: :sp, token: " ",
                                      double_colon?: false))
 
       assert_predicate subject, :awaiting_name?
+    end
+
+    def test_awaiting_name_becomes_naming_if_semicolon_keyword
+      subject = described_class.new status: :awaiting_name
 
       subject.send_event(:on_op,
                          build(:lex, event: :op, token: "::",
                                      double_colon?: true))
 
       assert_predicate subject, :naming?
+    end
+
+    def test_awaiting_name_becomes_naming_if_const_keyword
+      subject = described_class.new status: :awaiting_name
 
       subject.send_event(:on_const,
                          build(:lex, event: :const, token: "Foo",
                                      double_colon?: false))
 
       assert_predicate subject, :naming?
+    end
+
+    def test_naming_remains_naming_if_const_keyword
+      subject = described_class.new status: :naming
 
       subject.send_event(:on_op,
                          build(:lex, event: :const, token: "Bar",
                                      double_colon?: false))
 
       assert_predicate subject, :naming?
+    end
+
+    def test_naming_becomes_named_if_nl_keyword
+      subject = described_class.new status: :naming
 
       subject.send_event(:on_nl,
                          build(:lex, event: :nl, token: "\n",
