@@ -172,7 +172,7 @@ module TagRipper
 
     def test_name_raises_an_exception_if_may_not_set_name
       subject = described_class.new
-      subject.expects(:may_name?).returns(false)
+      subject.expects(:may_append_name?).returns(false)
       assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
                     "Cannot transition from pending to named") do
         subject.name = "entity-name"
@@ -275,6 +275,60 @@ module TagRipper
       subject = described_class.new
 
       refute_predicate subject, :name?
+    end
+
+    def test_awaiting_name_becomes_naming_until_next_token_not_a_name_component
+      subject = described_class.new
+
+      subject.send_event(:on_kw,
+                         build(:lex,
+                               event: :kw,
+                               token: "class",
+                               on_kw_type: "class",
+                               double_colon?: false))
+
+      assert_predicate subject, :awaiting_name?
+
+      subject.send_event(:on_sp,
+                         build(:lex, event: :sp, token: " ",
+                                     double_colon?: false))
+
+      assert_predicate subject, :awaiting_name?
+
+      subject.send_event(:on_op,
+                         build(:lex, event: :op, token: "::",
+                                     double_colon?: true))
+
+      assert_predicate subject, :naming?
+
+      subject.send_event(:on_const,
+                         build(:lex, event: :const, token: "Foo",
+                                     double_colon?: false))
+
+      assert_predicate subject, :naming?
+
+      subject.send_event(:on_op,
+                         build(:lex, event: :const, token: "Bar",
+                                     double_colon?: false))
+
+      assert_predicate subject, :naming?
+
+      subject.send_event(:on_nl,
+                         build(:lex, event: :nl, token: "\n",
+                                     double_colon?: false))
+
+      assert_predicate subject, :named?
+    end
+
+    private
+
+    def build(entity_type, **attributes)
+      send(:"build_#{entity_type}", **attributes)
+    end
+
+    def build_lex(**attributes)
+      attributes[:event] = :"on_#{attributes[:event]}"
+      stub("LexStub #{Random.random_number}", **attributes)
     end
   end
 end
