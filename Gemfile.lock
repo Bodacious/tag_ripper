@@ -111,7 +111,6 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  ffi (= 1.17.0)
   guard (~> 2.19)
   guard-minitest (~> 2.4)
   guard-rubocop (~> 1.5)
