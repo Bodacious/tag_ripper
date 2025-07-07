@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
 
   # Aiming to avoid runtime dependencies!
   spec.add_development_dependency "rake", "~> 13.2"
-  spec.add_development_dependency "rdoc"#, "~> 6.13"
+  spec.add_development_dependency "rdoc", ">= 5.0"
 
   spec.add_development_dependency "minitest", "~> 5.25"
 
