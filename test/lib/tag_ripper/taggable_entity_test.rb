@@ -156,8 +156,8 @@ module TagRipper
 
     def test_name_raises_an_exception_if_may_not_set_name
       subject = described_class.new
-      subject.expects(:may_append_name?).returns(false)
-      assert_raises(TagRipper::TaggableEntity::IllegalStateTransitionError,
+
+      assert_raises(TagRipper::StateMachines::IllegalStateTransitionError,
                     "Cannot transition from pending to named") do
         subject.name = "entity-name"
       end

@@ -54,12 +54,12 @@ module TagRipper
       end
 
       event :begin_naming do
-        transitions from: :awaiting_name, to: :begin_naming
+        transitions from: :awaiting_name, to: :naming
       end
 
       event :end_naming do
         transitions from: :awaiting_name, to: :named
-        transitions from: :begin_naming, to: :named
+        transitions from: :naming, to: :named
       end
 
       event :close do
@@ -128,9 +128,7 @@ module TagRipper
     end
 
     def name=(value)
-      unless may_append_name?
-        raise IllegalStateTransitionError.new(from: @status, to: :named)
-      end
+      begin_naming!
 
       @name = value
       end_naming!
@@ -179,11 +177,8 @@ module TagRipper
     protected
 
     def append_name!(string)
-      unless may_append_name?
-        raise IllegalStateTransitionError.new(from: @status, to: :naming)
-      end
+      begin_naming!
 
-      @status = :naming
       @name ||= ""
       @name.concat(string.to_s)
     end
