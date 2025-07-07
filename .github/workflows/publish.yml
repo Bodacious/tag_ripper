@@ -9,7 +9,6 @@ jobs:
     name: Publish to RubyGems
     runs-on: ubuntu-latest
 
-
     steps:
       - uses: actions/checkout@v4
 
