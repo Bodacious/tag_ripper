@@ -4,7 +4,6 @@
 [![Maintainability](https://qlty.sh/gh/Bodacious/projects/tag_ripper/maintainability.svg)](https://qlty.sh/gh/Bodacious/projects/tag_ripper)
 [![Code Coverage](https://qlty.sh/gh/Bodacious/projects/tag_ripper/coverage.svg)](https://qlty.sh/gh/Bodacious/projects/tag_ripper)
 
-
 Lets you annotate Ruby code with tags that can be parsed and collected in code.
 
 ## Installation
