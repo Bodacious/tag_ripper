@@ -130,19 +130,19 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  guard
-  guard-minitest
-  guard-rubocop
+  guard (~> 2.19)
+  guard-minitest (~> 2.4)
+  guard-rubocop (~> 1.5)
   logger (~> 1.7)
   minitest (~> 5.25)
   mocha (~> 2.7)
   mutex_m (~> 0.3)
   rake (~> 13.2)
-  rdoc (~> 6.13)
+  rdoc
   rubocop (~> 1.75)
   rubocop-minitest (~> 0.37)
   rubocop-rake (~> 0.7)
-  simplecov (= 0.22.0)
+  simplecov (~> 0.22)
   tag_ripper!
 
 BUNDLED WITH

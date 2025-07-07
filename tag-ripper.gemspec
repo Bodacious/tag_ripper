@@ -34,18 +34,18 @@ Gem::Specification.new do |spec|
 
   # Aiming to avoid runtime dependencies!
   spec.add_development_dependency "rake", "~> 13.2"
-  spec.add_development_dependency "rdoc", "~> 6.13"
+  spec.add_development_dependency "rdoc"#, "~> 6.13"
 
   spec.add_development_dependency "minitest", "~> 5.25"
 
   spec.add_development_dependency "rubocop", "~> 1.75"
   spec.add_development_dependency "rubocop-minitest", "~> 0.37"
   spec.add_development_dependency "rubocop-rake", "~> 0.7"
-  spec.add_development_dependency "simplecov", "0.22.0"
+  spec.add_development_dependency "simplecov", "~> 0.22"
 
-  spec.add_development_dependency "guard"
-  spec.add_development_dependency "guard-minitest"
-  spec.add_development_dependency "guard-rubocop"
+  spec.add_development_dependency "guard", "~> 2.19"
+  spec.add_development_dependency "guard-minitest", "~> 2.4"
+  spec.add_development_dependency "guard-rubocop", "~> 1.5"
 
   spec.add_development_dependency "logger", "~> 1.7"
   spec.add_development_dependency "mocha", "~> 2.7"
