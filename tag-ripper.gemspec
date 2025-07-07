@@ -35,8 +35,23 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Aiming to avoid runtime dependencies!
-  # spec.add_dependency "example-gem", "~> 1.0"
-   spec.add_development_dependency "rdoc"
+  spec.add_development_dependency "rake", "~> 13.2"
+  spec.add_development_dependency "rdoc", "~> 6.13"
+
+  spec.add_development_dependency "minitest", "~> 5.25"
+
+  spec.add_development_dependency "rubocop", "~> 1.75"
+  spec.add_development_dependency "rubocop-minitest", "~> 0.37"
+  spec.add_development_dependency "rubocop-rake", "~> 0.7"
+
+  spec.add_development_dependency "guard"
+  spec.add_development_dependency "guard-minitest"
+  spec.add_development_dependency "guard-rubocop"
+
+  spec.add_development_dependency "logger", "~> 1.7"
+  spec.add_development_dependency "mocha", "~> 2.7"
+  spec.add_development_dependency "mutex_m", "~> 0.3"
+
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
