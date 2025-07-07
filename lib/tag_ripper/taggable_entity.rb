@@ -15,6 +15,16 @@ module TagRipper
 
     include StateMachines
 
+    # Unable to move transition from one state to another
+    class IllegalStateTransitionError < StandardError
+      def initialize(from:, to:)
+        super("Cannot transition from #{from} to #{to}")
+      end
+    end
+
+    # Attempting to set status to an unknown value
+    class InvalidStatusError < ArgumentError; end
+
     # The valid statuses that a TaggableEntity can move through.
     # @return [Array<Symbol>]
     VALID_STATUSES = %i[
