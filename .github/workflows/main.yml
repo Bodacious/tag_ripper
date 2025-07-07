@@ -4,12 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
-
+permissions: read-all
 jobs:
   build:
-    permissions:
-      contents: read
-
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
     strategy:

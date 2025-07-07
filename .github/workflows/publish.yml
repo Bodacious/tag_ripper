@@ -3,14 +3,12 @@ name: Publish
 on:
   release:
     types: [published]
-
+permissions: read-all
 jobs:
   build:
     name: Publish to RubyGems
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: read
+
 
     steps:
       - uses: actions/checkout@v4
