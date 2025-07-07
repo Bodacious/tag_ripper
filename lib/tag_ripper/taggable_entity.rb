@@ -25,7 +25,6 @@ module TagRipper
     # Attempting to set status to an unknown value
     class InvalidStatusError < ArgumentError; end
 
-    # TODO: define naming state, to represent a partial name token
     # The valid statuses that a TaggableEntity can move through.
     # @return [Array<Symbol>]
     VALID_STATUSES = %i[

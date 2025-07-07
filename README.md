@@ -1,13 +1,10 @@
 # Tag::Ripper
 
-
 [![Ruby](https://github.com/Bodacious/tag-ripper/actions/workflows/main.yml/badge.svg)](https://github.com/Bodacious/tag-ripper/actions/workflows/main.yml)
 
 Lets you annotate Ruby code with tags that can be parsed and collected in code.
 
-
 ## Installation
-
 
 Install the gem and add to the application's Gemfile by executing:
 
@@ -23,7 +20,6 @@ gem install tag_ripper
 
 ## Usage
 
-
 ```ruby
 # @domain: Auth
 class User
@@ -36,18 +32,18 @@ end
 TagRipper.new(File.read('user.rb')).taggables
 # (Beautified output)
 # ---
-# - 
+# -
 #   id: 2221
 #   name: some_method_that_isnt_tested
 #   tags:
 #     warning:
 #       - "untested
 #   parent: 22224,
-# - 
+# -
 #   id: 22224
 #   name: User
 #   tags:
-#     domain: 
+#     domain:
 #       - "Auth"
 #    parent: nil
 ```
@@ -60,7 +56,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/bodacious/tag_ripper. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/bodacious/tag_ripper/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at <https://github.com/bodacious/tag_ripper>.
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/bodacious/tag_ripper/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
