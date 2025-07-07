@@ -5,7 +5,14 @@ require "bundler"
 
 ##
 # Test suite setup
-Bundler.require(:default, :test)
+require "minitest/autorun"
+require "mocha/minitest"
+require "simplecov"
+SimpleCov.start do
+  add_filter "/test/"
+  add_filter "/pkg/"
+  add_filter "/samples/"
+end
 
 ##
 # Test helpers etc.

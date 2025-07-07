@@ -1,11 +1,8 @@
 name: Ruby
 
-
 on:
   push:
-    branches:
-      - main
-
+    branches: [main]
   pull_request:
 
 jobs:
@@ -33,3 +30,9 @@ jobs:
           bundler-cache: true
       - name: Run the tests
         run: bundle exec rake test
+
+      - name: Upload coverage to QLTY
+        uses: qltysh/qlty-action/coverage@v1
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/.resultset.json
