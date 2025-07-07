@@ -1,6 +1,9 @@
-# Tag::Ripper
+# 🏷️ Tag Ripper
 
 [![Ruby](https://github.com/Bodacious/tag-ripper/actions/workflows/main.yml/badge.svg)](https://github.com/Bodacious/tag-ripper/actions/workflows/main.yml)
+[![Maintainability](https://qlty.sh/gh/Bodacious/projects/tag_ripper/maintainability.svg)](https://qlty.sh/gh/Bodacious/projects/tag_ripper)
+[![Code Coverage](https://qlty.sh/gh/Bodacious/projects/tag_ripper/coverage.svg)](https://qlty.sh/gh/Bodacious/projects/tag_ripper)
+
 
 Lets you annotate Ruby code with tags that can be parsed and collected in code.
 
