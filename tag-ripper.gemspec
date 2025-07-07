@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 # rubocop:disable all
-require_relative "lib/tag_ripper/version"
-
 Gem::Specification.new do |spec|
   spec.name = "tag_ripper"
-  spec.version = TagRipper::VERSION
+  spec.version = "0.3.0"
   spec.authors = ["Gavin Morrice"]
   spec.email = ["gavin@gavinmorrice.com"]
 
